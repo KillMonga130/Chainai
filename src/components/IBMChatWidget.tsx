@@ -1,23 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
+import { generateAuthToken } from '../services/watsonx-auth';
 import { motion } from 'motion/react';
 import { Sparkles, RefreshCw, Copy, Check } from 'lucide-react';
 import { LogoIcon } from './Logo';
 import { fetchSupplyChainReports, formatReport } from '../services/reliefweb';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 
 declare global {
   interface Window {
-    wxOConfiguration?: {
-      orchestrationID: string;
-      hostURL: string;
-      rootElementID: string;
-      deploymentPlatform: string;
-      crn: string;
-      chatOptions: {
-        agentId: string;
-        agentEnvironmentId: string;
-      };
-    };
+    wxOConfiguration?: any;
     wxoLoader?: {
       init: () => void;
     };
@@ -26,6 +17,7 @@ declare global {
 
 export function IBMChatWidget() {
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [authToken, setAuthToken] = useState<string | null>(null);
   const [quickPrompts, setQuickPrompts] = useState<string[]>([
     "Analyze recent humanitarian supply chain disruptions",
     "Check current logistics challenges in crisis zones",
@@ -138,6 +130,16 @@ export function IBMChatWidget() {
   };
 
   useEffect(() => {
+    // Obtain auth token (IAM or unsecured fallback)
+    (async () => {
+      try {
+        const token = await generateAuthToken();
+        setAuthToken(token);
+      } catch {
+        setAuthToken('');
+      }
+    })();
+
     // Suppress third-party library warnings from IBM watsonx Orchestrate widget
     const originalWarn = console.warn;
     const originalError = console.error;
@@ -171,6 +173,9 @@ export function IBMChatWidget() {
       rootElementID: "ibm-chat-root",
       deploymentPlatform: "ibmcloud",
       crn: "crn:v1:bluemix:public:watsonx-orchestrate:us-south:a/c139b03f7afb4bc7b617216e3046ac5b:6e4a398d-0f34-42ad-9706-1f16af156856::",
+      // Only include token if we have one (security enabled with JWT/IAM)
+      // When security is disabled, omit token field entirely
+      ...(authToken && authToken.trim() !== '' ? { token: authToken } : {}),
       chatOptions: {
         agentId: "5529ab2d-b69d-40e8-a0af-78655396c3e5",
         agentEnvironmentId: "87dcb805-67f1-4d94-a1b4-469a8f0f4dad",
@@ -196,7 +201,7 @@ export function IBMChatWidget() {
         script.parentNode.removeChild(script);
       }
     };
-  }, []);
+  }, [authToken]);
 
   return (
     <motion.div

@@ -5,6 +5,12 @@
 
 import { WATSONX_CONFIG } from './watsonx-config';
 
+// Env-driven controls
+const ENV = (import.meta as any)?.env ?? {};
+const ENV_JWT: string | undefined = ENV.VITE_WXO_JWT;
+const ENV_SECURITY_DISABLED: boolean = `${ENV.VITE_WXO_SECURITY_DISABLED}` === 'true';
+const ENV_USE_IAM: boolean = `${ENV.VITE_WXO_USE_IAM}` === 'true';
+
 interface IAMTokenResponse {
   access_token: string;
   refresh_token: string;
@@ -33,8 +39,12 @@ let tokenExpiration: number = 0;
 async function getIAMToken(): Promise<string> {
   try {
     console.log('[Chain AI Auth] Attempting to get IAM token...');
-    
-    const response = await fetch('https://iam.cloud.ibm.com/identity/token', {
+    // Use Vite dev proxy in development to avoid CORS; real IAM endpoint in production
+    const iamBase = (typeof import.meta !== 'undefined' && (import.meta as any).env?.DEV)
+      ? '/_iam'
+      : 'https://iam.cloud.ibm.com';
+
+    const response = await fetch(`${iamBase}/identity/token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -82,37 +92,50 @@ export async function generateAuthToken(): Promise<string> {
       return cachedToken;
     }
 
-    // Try to get IBM Cloud IAM token
-    try {
-      const iamToken = await getIAMToken();
-      
-      // For IBM Cloud instances, we can use the IAM token directly
-      // Store it in cache with expiration (IAM tokens typically last 1 hour)
-      cachedToken = iamToken;
-      tokenExpiration = now + 3600; // 1 hour from now
-      
-      console.log('[Chain AI Auth] Token generated and cached');
-      return iamToken;
-    } catch (iamError: any) {
-      // If CORS error, fall back to unsecured token for development
-      if (iamError.message === 'CORS_ERROR') {
-        console.warn('[Chain AI Auth] Falling back to development authentication mode');
-        console.warn('[Chain AI Auth] For production, configure a backend proxy or disable security on watsonx instance');
-        
-        const unsecuredToken = createUnsecuredToken('chainai-user', 'Chain AI User');
-        cachedToken = unsecuredToken;
+    // 1) If a JWT is provided via env, prefer it
+    if (ENV_JWT) {
+      console.log('[Chain AI Auth] Using JWT from environment');
+      cachedToken = ENV_JWT;
+      // Try to decode exp if present
+      try {
+        const [, payload] = ENV_JWT.split('.');
+        const data = JSON.parse(atob(payload));
+        tokenExpiration = typeof data.exp === 'number' ? data.exp : now + 3600;
+      } catch {
         tokenExpiration = now + 3600;
-        
-        return unsecuredToken;
       }
-      throw iamError;
+      return ENV_JWT;
     }
+
+    // 2) If security is explicitly disabled, return empty string (no token needed)
+    if (ENV_SECURITY_DISABLED) {
+      console.warn('[Chain AI Auth] Security disabled by env flag. No token required.');
+      return '';
+    }
+
+    // 3) Optionally allow IAM token usage if explicitly enabled
+    if (ENV_USE_IAM) {
+      try {
+        const iamToken = await getIAMToken();
+        cachedToken = iamToken;
+        tokenExpiration = now + 3600; // 1 hour from now
+        console.log('[Chain AI Auth] IAM token generated and cached');
+        return iamToken;
+      } catch (iamError: any) {
+        if (iamError.message === 'CORS_ERROR') {
+          console.warn('[Chain AI Auth] CORS error getting IAM token. Consider using env JWT or disabling security.');
+        }
+        throw iamError;
+      }
+    }
+
+    // 4) Otherwise, we cannot provide a valid token under secure instance
+    throw new Error('NO_TOKEN_AVAILABLE');
   } catch (error) {
     console.error('[Chain AI Auth] Error generating auth token:', error);
-    // Instead of throwing, return unsecured token as last resort
-    console.warn('[Chain AI Auth] Using unsecured token as fallback');
-    const fallbackToken = createUnsecuredToken('chainai-user', 'Chain AI User');
-    return fallbackToken;
+    // As a last resort only when explicitly disabled via env we already returned above.
+    // Here, rethrow to allow UI to show helpful guidance.
+    throw error;
   }
 }
 
@@ -175,13 +198,18 @@ export interface AuthConfig {
 }
 
 export function getAuthConfig(): AuthConfig {
-  // Security is DISABLED - no authentication required
-  return {
-    enabled: false,
-    useIAMAuth: false,
-    useFallbackAuth: false,
-    tokenProvider: undefined,
-  };
+  // Reflect env-based configuration
+  if (ENV_JWT) {
+    return { enabled: true, useIAMAuth: false, useFallbackAuth: false, tokenProvider: generateAuthToken };
+  }
+  if (ENV_SECURITY_DISABLED) {
+    return { enabled: false, useIAMAuth: false, useFallbackAuth: true, tokenProvider: generateAuthToken };
+  }
+  if (ENV_USE_IAM) {
+    return { enabled: true, useIAMAuth: true, useFallbackAuth: false, tokenProvider: generateAuthToken };
+  }
+  // Default: security likely enabled at instance but no token configured
+  return { enabled: true, useIAMAuth: false, useFallbackAuth: false };
 }
 
 /**
@@ -203,12 +231,12 @@ export function getAuthStatus(): { status: 'authenticated' | 'fallback' | 'error
     
     return {
       status: 'authenticated',
-      message: 'Authenticated with IBM Cloud IAM'
+      message: ENV_JWT ? 'Authenticated with JWT' : 'Authenticated with IBM Cloud IAM'
     };
   }
   
   return {
     status: 'error',
-    message: 'Not authenticated'
+    message: 'Not authenticated. Provide VITE_WXO_JWT or disable security (VITE_WXO_SECURITY_DISABLED=true) or enable IAM (VITE_WXO_USE_IAM=true).'
   };
 }

@@ -39,24 +39,33 @@ export default function App() {
   // Initialization
   useEffect(() => {
     // Authentication status console message
+    const ENV: any = (import.meta as any)?.env ?? {};
+    const isSecurityDisabled = `${ENV.VITE_WXO_SECURITY_DISABLED}` === 'true';
+    const hasJWT = !!ENV.VITE_WXO_JWT;
+    const useIAM = `${ENV.VITE_WXO_USE_IAM}` === 'true';
+
     console.log(
       '%c🔐 Chain AI Security System',
       'color: #4f46e5; font-size: 16px; font-weight: bold;'
     );
-    console.log(
-      '%c✅ Security is DISABLED - no authentication required',
-      'color: #10b981; font-size: 12px;'
-    );
+    if (hasJWT) {
+      console.log('%c✅ Auth: Using JWT from environment', 'color: #10b981; font-size: 12px;');
+    } else if (isSecurityDisabled) {
+      console.log('%c⚠️ Security DISABLED mode active (unsecured token)', 'color: #f59e0b; font-size: 12px;');
+      console.log('%c⚠️ IMPORTANT: Run wxO-embed-chat-security-tool.sh to disable security on your Orchestrate instance!', 'color: #f59e0b; font-size: 12px; font-weight: bold;');
+      console.log('%c   Until then, you will get 401 errors from the API.', 'color: #f59e0b; font-size: 12px;');
+      console.log('%c   See DISABLE_SECURITY_STEPS.md for instructions.', 'color: #6366f1; font-size: 12px;');
+    } else if (useIAM) {
+      console.log('%cℹ️ Auth: Attempting IBM Cloud IAM (may not be accepted by Orchestrate embed)', 'color: #6366f1; font-size: 12px;');
+    } else {
+      console.log('%c⚠️ Security likely enabled on instance: provide VITE_WXO_JWT or disable with VITE_WXO_SECURITY_DISABLED=true', 'color: #f59e0b; font-size: 12px;');
+    }
     console.log(
       '%cℹ️ To monitor connection status:',
       'color: #6366f1; font-size: 12px;'
     );
     console.log('   1. Click the Settings icon (⚙️) in the navigation');
     console.log('   2. View Connection Status and Configuration Validator');
-    console.log(
-      '%c📖 Make sure security is disabled on your watsonx instance',
-      'color: #f59e0b; font-size: 12px;'
-    );
   }, []);
 
   return (

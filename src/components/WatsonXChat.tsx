@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { WATSONX_CONFIG, WatsonXAgent } from '../services/watsonx-config';
+import { generateAuthToken } from '../services/watsonx-auth';
 
 interface WatsonXChatProps {
   agent: WatsonXAgent;
@@ -25,10 +26,30 @@ export function WatsonXChat({ agent, onLoad, onChatReady, className = '' }: Wats
   const scriptLoadedRef = useRef(false);
   const chatInstanceRef = useRef<any>(null);
 
-  // Authentication disabled - proceed immediately
+  // Get an auth token (IAM if possible, unsecured fallback in dev)
   useEffect(() => {
-    console.log('[Chain AI] Security disabled - no authentication required');
-    setAuthToken('none'); // Proceed without auth
+    let cancelled = false;
+    (async () => {
+      try {
+        console.log('[Chain AI] Requesting authentication token...');
+        const token = await generateAuthToken();
+        if (!cancelled) {
+          setAuthToken(token);
+        }
+      } catch (e: any) {
+        console.warn('[Chain AI] Failed to obtain auth token', e);
+        if (!cancelled) {
+          // Provide clear guidance rather than hanging on "Connecting..."
+          const env: any = (import.meta as any)?.env ?? {};
+          const msg = env.VITE_WXO_JWT
+            ? 'Provided JWT appears invalid or expired. Please refresh it and reload.'
+            : 'Authentication not configured. Either set VITE_WXO_JWT to a valid Orchestrate JWT, or disable security with VITE_WXO_SECURITY_DISABLED=true (dev only). See wxO-embed-chat-security-tool.sh.';
+          setError(msg);
+          setIsLoading(false);
+        }
+      }
+    })();
+    return () => { cancelled = true; };
   }, []);
 
   useEffect(() => {
@@ -57,6 +78,9 @@ export function WatsonXChat({ agent, onLoad, onChatReady, className = '' }: Wats
           showLauncher: false,
           deploymentPlatform: WATSONX_CONFIG.deploymentPlatform,
           crn: WATSONX_CONFIG.crn,
+          // Only include token if we have one (security enabled with JWT/IAM)
+          // When security is disabled, omit token field entirely
+          ...(authToken && authToken.trim() !== '' ? { token: authToken } : {}),
           chatOptions: {
             agentId: agent.agentId,
             agentEnvironmentId: agent.agentEnvironmentId,

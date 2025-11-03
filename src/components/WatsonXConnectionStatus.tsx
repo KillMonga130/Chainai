@@ -8,7 +8,8 @@ import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { WATSONX_CONFIG } from '../services/watsonx-config';
-import { CheckCircle2, XCircle, AlertCircle, RefreshCw, Wifi, WifiOff } from 'lucide-react';
+import { getAuthConfig, getAuthStatus } from '../services/watsonx-auth';
+import { CheckCircle2, XCircle, AlertCircle, RefreshCw, Wifi, WifiOff, Shield } from 'lucide-react';
 
 interface ConnectionStatusProps {
   className?: string;
@@ -45,17 +46,43 @@ export function WatsonXConnectionStatus({ className = '' }: ConnectionStatusProp
         console.log('[Chain AI Status] Using no-cors mode, assuming connected');
       }
 
-      // Authentication disabled
-      setAuthState('unauthenticated');
-      setAuthMessage('Security disabled - no authentication required');
-      console.log('[Chain AI Status] Security disabled');
+      // Check actual auth config from env
+      const authConfig = getAuthConfig();
+      const authStatus = getAuthStatus();
+      
+      if (authConfig.enabled === false && authConfig.useFallbackAuth) {
+        // Security explicitly disabled via env
+        setAuthState('unauthenticated');
+        setAuthMessage('Security disabled - no authentication required');
+        console.log('[Chain AI Status] Security disabled');
+      } else if (authStatus.status === 'authenticated') {
+        setAuthState('authenticated');
+        setAuthMessage(authStatus.message);
+        console.log('[Chain AI Status] Authenticated:', authStatus.message);
+      } else if (authStatus.status === 'fallback') {
+        setAuthState('fallback');
+        setAuthMessage(authStatus.message);
+        console.log('[Chain AI Status] Fallback auth:', authStatus.message);
+      } else {
+        setAuthState('error');
+        setAuthMessage(authStatus.message);
+        setErrorMessage('Authentication not configured. Set VITE_WXO_JWT or VITE_WXO_SECURITY_DISABLED=true');
+        console.warn('[Chain AI Status] Auth error:', authStatus.message);
+      }
 
       setLastChecked(new Date());
     } catch (error: any) {
       console.error('[Chain AI Status] Connection check failed:', error);
       setConnectionState('connected'); // Assume connected anyway
-      setAuthState('unauthenticated');
-      setAuthMessage('Security disabled');
+      const authStatus = getAuthStatus();
+      if (authStatus.status === 'error') {
+        setAuthState('error');
+        setAuthMessage(authStatus.message);
+        setErrorMessage('Authentication not configured.');
+      } else {
+        setAuthState(authStatus.status);
+        setAuthMessage(authStatus.message);
+      }
       setLastChecked(new Date());
     }
   };
@@ -158,10 +185,10 @@ export function WatsonXConnectionStatus({ className = '' }: ConnectionStatusProp
               </div>
             </div>
             <Badge
-              variant="default"
-              className="capitalize bg-green-600"
+              variant={authState === 'error' ? 'destructive' : 'default'}
+              className={`capitalize ${authState === 'unauthenticated' ? 'bg-green-600' : authState === 'authenticated' ? 'bg-blue-600' : ''}`}
             >
-              disabled
+              {authState === 'unauthenticated' ? 'disabled' : authState}
             </Badge>
           </div>
 
@@ -182,16 +209,32 @@ export function WatsonXConnectionStatus({ className = '' }: ConnectionStatusProp
             </span>
           </div>
 
-          {/* Security Disabled Notice */}
-          <div className="mt-4 p-3 rounded-lg dark:bg-green-900/20 light:bg-green-50 border dark:border-green-800 light:border-green-200">
-            <p className="text-sm dark:text-green-200 light:text-green-900 mb-2">
-              <strong>Security Disabled:</strong>
-            </p>
-            <p className="text-xs dark:text-green-300 light:text-green-800">
-              Authentication has been disabled. The chat widget connects directly without JWT tokens. 
-              Make sure security is disabled on your watsonx Orchestrate instance using the wxO-embed-chat-security-tool.sh script.
-            </p>
-          </div>
+          {/* Security Configuration Notice */}
+          {authState === 'unauthenticated' && (
+            <div className="mt-4 p-3 rounded-lg dark:bg-green-900/20 light:bg-green-50 border dark:border-green-800 light:border-green-200">
+              <p className="text-sm dark:text-green-200 light:text-green-900 mb-2">
+                <strong>Security Disabled:</strong>
+              </p>
+              <p className="text-xs dark:text-green-300 light:text-green-800">
+                Authentication has been disabled via VITE_WXO_SECURITY_DISABLED. The chat widget connects directly without JWT tokens. 
+                Make sure security is disabled on your watsonx Orchestrate instance using the wxO-embed-chat-security-tool.sh script.
+              </p>
+            </div>
+          )}
+          {authState === 'error' && (
+            <div className="mt-4 p-3 rounded-lg dark:bg-red-900/20 light:bg-red-50 border dark:border-red-800 light:border-red-200">
+              <p className="text-sm dark:text-red-200 light:text-red-900 mb-2">
+                <strong>Configuration Required:</strong>
+              </p>
+              <p className="text-xs dark:text-red-300 light:text-red-800 mb-2">
+                Create a <code className="dark:bg-slate-800 light:bg-white px-1 rounded">.env.local</code> file in the project root with one of:
+              </p>
+              <ul className="text-xs dark:text-red-300 light:text-red-800 list-disc list-inside space-y-1">
+                <li><code className="dark:bg-slate-800 light:bg-white px-1 rounded">VITE_WXO_SECURITY_DISABLED=true</code> (dev only, after disabling via wxO tool)</li>
+                <li><code className="dark:bg-slate-800 light:bg-white px-1 rounded">VITE_WXO_JWT=your_jwt_here</code> (production-ready auth)</li>
+              </ul>
+            </div>
+          )}
         </AlertDescription>
       </Alert>
     </div>

@@ -25,7 +25,7 @@ export function AgentCard({ number, title, description, status, index = 0 }: Age
       {/* Content */}
       <div className="relative z-10">
         {/* Number badge */}
-        <div className="mb-4 inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full shadow-lg group-hover:scale-110 transition-transform duration-300">
+        <div className="mb-4 inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-indigo-600 to-cyan-600 rounded-full shadow-lg group-hover:scale-110 transition-transform duration-300">
           <span className="text-white text-xl font-bold">{number}</span>
         </div>
         

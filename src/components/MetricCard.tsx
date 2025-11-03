@@ -40,10 +40,10 @@ export function MetricCard({ value, label, subtitle, index = 0 }: MetricCardProp
         )}
 
         {/* Decorative glow */}
-        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-indigo-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         
         {/* Bottom accent line */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-1 bg-gradient-to-r from-indigo-500 to-purple-600 group-hover:w-3/4 transition-all duration-500 rounded-full" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-1 bg-gradient-to-r from-indigo-500 to-cyan-600 group-hover:w-3/4 transition-all duration-500 rounded-full" />
       </div>
     </motion.div>
   );

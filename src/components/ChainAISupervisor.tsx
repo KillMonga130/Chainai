@@ -46,9 +46,20 @@ interface Message {
   }[];
 }
 
-export function ChainAISupervisor() {
+interface ChainAISupervisorProps {
+  agent?: WatsonXAgent;
+}
+
+export function ChainAISupervisor({ agent: propAgent }: ChainAISupervisorProps = {}) {
   const messageIdCounter = useRef(0);
-  const [selectedAgent, setSelectedAgent] = useState<WatsonXAgent>(AGENTS[0]); // Default to Supervisor
+  const [selectedAgent, setSelectedAgent] = useState<WatsonXAgent>(propAgent || AGENTS[0]);
+  
+  // Update selected agent when prop changes
+  useEffect(() => {
+    if (propAgent) {
+      setSelectedAgent(propAgent);
+    }
+  }, [propAgent]);
   const [chatMode, setChatMode] = useState<'live' | 'demo'>('live');
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -87,7 +98,7 @@ export function ChainAISupervisor() {
       status: 'idle',
       progress: 0,
       message: 'Ready to scan supply chain data',
-      color: 'purple'
+      color: 'cyan'
     },
     {
       id: 'investigator',
@@ -464,8 +475,9 @@ export function ChainAISupervisor() {
         </div>
       </motion.div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        {/* Agent Status Panel */}
+      <div className={chatMode === 'live' && propAgent ? 'w-full' : 'grid lg:grid-cols-3 gap-6'}>
+        {/* Agent Status Panel - Only show in Live mode when no external agent selector */}
+        {chatMode === 'live' && !propAgent && (
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -473,7 +485,7 @@ export function ChainAISupervisor() {
         >
           <div className="backdrop-blur-xl dark:bg-slate-800/50 light:bg-white/80 border dark:border-slate-700/50 light:border-slate-300 rounded-2xl overflow-hidden sticky top-24">
             {/* Panel Header */}
-            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-4">
+            <div className="bg-gradient-to-r from-indigo-600 to-cyan-600 p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
@@ -526,7 +538,7 @@ export function ChainAISupervisor() {
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-1">
-                                <h4 className="text-white dark:text-white light:text-slate-900 text-sm">{watsonAgent.name}</h4>
+                                <h4 className="dark:text-white light:text-slate-700 text-sm">{watsonAgent.name}</h4>
                                 {isSelected && (
                                   <div className="px-2 py-0.5 rounded-full bg-green-400/20 border border-green-400/30 text-green-400 text-xs flex items-center gap-1">
                                     <CheckCircle className="w-3 h-3" />
@@ -558,7 +570,7 @@ export function ChainAISupervisor() {
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-1">
-                                <h4 className="text-white dark:text-white light:text-slate-900 text-sm">{agent.name}</h4>
+                                <h4 className="dark:text-white light:text-slate-700 text-sm">{agent.name}</h4>
                                 <div className={`px-2 py-0.5 rounded-full border text-xs flex items-center gap-1 ${getStatusColor(agent.status)}`}>
                                   {getStatusIcon(agent.status)}
                                   <span className="capitalize">{agent.status}</span>
@@ -588,17 +600,18 @@ export function ChainAISupervisor() {
             </AnimatePresence>
           </div>
         </motion.div>
+        )}
 
         {/* Chat Interface */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="lg:col-span-2"
+          className={chatMode === 'live' && propAgent ? 'w-full' : chatMode === 'demo' ? 'w-full' : 'lg:col-span-2'}
         >
           <div className="backdrop-blur-xl dark:bg-slate-800/50 light:bg-white/80 border dark:border-slate-700/50 light:border-slate-300 rounded-2xl overflow-hidden shadow-2xl">
             {/* Chat Header */}
-            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6">
+            <div className="bg-gradient-to-r from-indigo-600 to-cyan-600 p-6">
               <div className="flex items-center gap-3">
                 <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
                   <LogoIcon variant="white" size={32} />
@@ -656,7 +669,7 @@ export function ChainAISupervisor() {
                   
                   <div className={`max-w-[80%] rounded-xl p-4 ${
                     message.role === 'user'
-                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white'
+                      ? 'bg-gradient-to-r from-indigo-600 to-cyan-600 text-white'
                       : message.role === 'supervisor'
                       ? 'dark:bg-slate-800/80 light:bg-white border dark:border-slate-700 light:border-slate-200'
                       : 'dark:bg-slate-800/50 light:bg-slate-100 border dark:border-slate-700/50 light:border-slate-200'
@@ -778,7 +791,7 @@ export function ChainAISupervisor() {
                 <button
                   type="submit"
                   disabled={isProcessing || !input.trim()}
-                  className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:shadow-lg hover:shadow-indigo-500/25 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 text-white rounded-xl hover:shadow-lg hover:shadow-indigo-500/25 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
                   {isProcessing ? (
                     <>

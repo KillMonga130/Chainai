@@ -14,7 +14,7 @@ export function ThemeToggle() {
       aria-label="Toggle theme"
     >
       {/* Background gradient glow */}
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-cyan-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       
       {/* Icon container with animation */}
       <div className="relative w-6 h-6">

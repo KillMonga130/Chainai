@@ -214,7 +214,7 @@ export function IBMChatWidget() {
       {/* Chat container with glassmorphic effect */}
       <div className="backdrop-blur-xl dark:bg-slate-800/50 light:bg-white/80 border dark:border-slate-700/50 light:border-slate-300 rounded-2xl shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6">
+        <div className="bg-gradient-to-r from-indigo-600 to-cyan-600 p-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
               <LogoIcon variant="white" size={24} />

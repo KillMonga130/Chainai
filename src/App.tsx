@@ -1,7 +1,6 @@
 import './services/error-suppressor'; // MUST BE FIRST - suppress known errors
-import './services/error-suppressor'; // MUST BE FIRST - suppress known errors
 import './services/i18n'; // Initialize i18next mock
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ThemeProvider } from './components/ThemeProvider';
 import { Navigation } from './components/Navigation';
 import { FeatureCard } from './components/FeatureCard';
@@ -10,7 +9,9 @@ import { MetricCard } from './components/MetricCard';
 import { ChainAISupervisor } from './components/ChainAISupervisor';
 import { LiveCrisisFeed } from './components/LiveCrisisFeed';
 import { ChainAILogo } from './components/Logo';
+import { AgentSelector } from './components/AgentSelector';
 import { Toaster } from './components/ui/sonner';
+import { AGENTS } from './services/watsonx-config';
 import { motion } from 'motion/react';
 import { 
   Zap, 
@@ -35,6 +36,7 @@ import {
 
 export default function App() {
   const heroRef = useRef<HTMLDivElement>(null);
+  const [selectedAgent, setSelectedAgent] = useState(AGENTS[0]); // Default to Supervisor
 
   // Initialization
   useEffect(() => {
@@ -75,7 +77,7 @@ export default function App() {
         <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
           {/* Gradient orbs */}
           <div className="absolute top-0 left-1/4 w-96 h-96 dark:bg-indigo-500/20 light:bg-indigo-500/10 rounded-full mix-blend-multiply filter blur-3xl animate-float" />
-          <div className="absolute top-1/3 right-1/4 w-96 h-96 dark:bg-purple-500/20 light:bg-purple-500/10 rounded-full mix-blend-multiply filter blur-3xl animate-float" style={{ animationDelay: '2s' }} />
+          <div className="absolute top-1/3 right-1/4 w-96 h-96 dark:bg-cyan-500/20 light:bg-cyan-500/10 rounded-full mix-blend-multiply filter blur-3xl animate-float" style={{ animationDelay: '2s' }} />
           <div className="absolute bottom-1/4 left-1/3 w-96 h-96 dark:bg-teal-500/20 light:bg-teal-500/10 rounded-full mix-blend-multiply filter blur-3xl animate-float" style={{ animationDelay: '4s' }} />
           
           {/* Grid pattern */}
@@ -130,7 +132,7 @@ export default function App() {
                     whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => document.getElementById('try-now')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="group px-8 py-4 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold text-lg shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/40 transition-all duration-300 flex items-center justify-center gap-2"
+                    className="group px-8 py-4 rounded-full bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-semibold text-lg shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/40 transition-all duration-300 flex items-center justify-center gap-2"
                   >
                     <span>Try Supervisor AI</span>
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -179,7 +181,7 @@ export default function App() {
                 <div className="relative backdrop-blur-xl dark:bg-slate-800/50 light:bg-white/70 border dark:border-slate-700/50 light:border-slate-200 rounded-3xl p-8 shadow-2xl">
                   {/* Logo */}
                   <div className="flex justify-center mb-8">
-                    <div className="p-6 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl shadow-lg">
+                    <div className="p-6 bg-gradient-to-br from-indigo-600 to-cyan-600 rounded-2xl shadow-lg">
                       <ChainAILogo size="lg" variant="white" animated={true} />
                     </div>
                   </div>
@@ -225,7 +227,7 @@ export default function App() {
                 <motion.div
                   animate={{ y: [0, 10, 0] }}
                   transition={{ duration: 4, repeat: Infinity, delay: 1 }}
-                  className="absolute -bottom-4 -left-4 p-4 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl shadow-lg"
+                  className="absolute -bottom-4 -left-4 p-4 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl shadow-lg"
                 >
                   <Network className="w-8 h-8 text-white" />
                 </motion.div>
@@ -307,7 +309,7 @@ export default function App() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
               >
-                <span className="inline-block px-4 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-sm font-medium mb-4">
+                <span className="inline-block px-4 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-sm font-medium mb-4">
                   AI Agents
                 </span>
                 <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
@@ -392,7 +394,7 @@ export default function App() {
         {/* Impact Metrics Section */}
         <section id="impact" className="py-24 px-6 relative">
           <div className="max-w-7xl mx-auto">
-            <div className="backdrop-blur-xl bg-gradient-to-br from-indigo-900/30 to-purple-900/30 dark:from-indigo-900/30 dark:to-purple-900/30 light:from-indigo-50 light:to-purple-50 border border-slate-700/50 dark:border-slate-700/50 light:border-indigo-200 rounded-3xl p-12 shadow-2xl">
+            <div className="backdrop-blur-xl bg-gradient-to-br from-indigo-900/30 to-cyan-900/30 dark:from-indigo-900/30 dark:to-cyan-900/30 light:from-indigo-50 light:to-cyan-50 border border-slate-700/50 dark:border-slate-700/50 light:border-indigo-200 rounded-3xl p-12 shadow-2xl">
               <div className="max-w-3xl mx-auto text-center mb-12">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -469,6 +471,7 @@ export default function App() {
             <div className="mb-16">
               <LiveCrisisFeed />
             </div>
+            
             <div className="max-w-5xl mx-auto text-center mb-12">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -479,15 +482,30 @@ export default function App() {
                   Try It Now
                 </span>
                 <h2 className="text-4xl md:text-5xl font-bold text-white dark:text-white light:text-slate-900 mb-6">
-                  Chain AI Supervisor
+                  Chain AI Multi-Agent System
                 </h2>
                 <p className="text-xl text-slate-400 dark:text-slate-400 light:text-slate-600 leading-relaxed">
-                  Interact with our multi-agent orchestration system. The Supervisor coordinates 5 specialized AI agents to analyze supply chain disruptions in real-time.
+                  Interact with our specialized AI agents. All agents receive enriched context from the Live Crisis Feed above.
                 </p>
               </motion.div>
             </div>
 
-            <ChainAISupervisor />
+            {/* Agent Selector + Chat Interface */}
+            <div className="grid lg:grid-cols-3 gap-8">
+              {/* Left: Agent Selector */}
+              <div className="lg:col-span-1">
+                <AgentSelector 
+                  agents={AGENTS}
+                  selectedAgent={selectedAgent}
+                  onSelectAgent={setSelectedAgent}
+                />
+              </div>
+
+              {/* Right: Chat Interface */}
+              <div className="lg:col-span-2">
+                <ChainAISupervisor key={selectedAgent.id} agent={selectedAgent} />
+              </div>
+            </div>
           </div>
         </section>
 
@@ -524,9 +542,9 @@ export default function App() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.1 }}
-                  className="backdrop-blur-xl dark:bg-slate-800/50 light:bg-white border dark:border-slate-700/50 light:border-slate-200 rounded-xl p-6 text-center hover:border-purple-500/30 transition-all duration-300"
+                  className="backdrop-blur-xl dark:bg-slate-800/50 light:bg-white border dark:border-slate-700/50 light:border-slate-200 rounded-xl p-6 text-center hover:border-cyan-500/30 transition-all duration-300"
                 >
-                  <Search className="w-12 h-12 text-purple-400 mx-auto mb-4" />
+                  <Search className="w-12 h-12 text-cyan-400 mx-auto mb-4" />
                   <h3 className="text-white dark:text-white light:text-slate-900 font-semibold mb-2">Real-Time Analysis</h3>
                   <p className="text-slate-400 dark:text-slate-400 light:text-slate-600">
                     Integrates live data from transportation, weather, inventory, and news sources

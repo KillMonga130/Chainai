@@ -310,15 +310,6 @@ export function WatsonXChat({ agent, onLoad, onChatReady, className = '' }: Wats
           if (window.wxoLoader) {
             window.wxoLoader.init();
             scriptLoadedRef.current = true;
-            
-            // Set timeout to detect if chat never becomes ready
-            setTimeout(() => {
-              if (isLoading) {
-                console.error('[Chain AI] Chat failed to become ready within 30 seconds');
-                setError('Chat connection timeout. The agent may not be configured for anonymous access or the environment may not be published. Check browser console for details.');
-                setIsLoading(false);
-              }
-            }, 30000);
           } else {
             setError('Failed to initialize watsonx Orchestrate');
           }

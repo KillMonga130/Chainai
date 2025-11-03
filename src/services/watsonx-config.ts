@@ -41,7 +41,7 @@ export const AGENTS: WatsonXAgent[] = [
     agentId: '6b049d85-126a-4545-9292-a8f4ec290b02',
     agentEnvironmentId: '2da4dc33-42b2-414d-8e57-085b6d9dda02',
     description: 'Scans ReliefWeb crisis data and identifies supply chain vulnerabilities',
-    color: 'purple'
+    color: 'cyan'
   },
   {
     id: 'investigator',

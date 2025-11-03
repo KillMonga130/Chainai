@@ -19,12 +19,12 @@ export function FeatureCard({ icon: Icon, title, description, index = 0 }: Featu
       className="group relative overflow-hidden rounded-2xl dark:bg-slate-800/50 light:bg-white/80 backdrop-blur-sm border dark:border-slate-700/50 light:border-slate-200 hover:border-indigo-500/50 transition-all duration-300 p-8"
     >
       {/* Gradient Overlay (Appears on Hover) */}
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 transition-opacity duration-300" />
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-br from-indigo-500/10 to-cyan-500/10 transition-opacity duration-300" />
       
       {/* Content */}
       <div className="relative z-10">
         {/* Icon */}
-        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
           <Icon className="w-7 h-7 text-white" />
         </div>
         

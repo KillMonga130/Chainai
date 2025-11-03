@@ -80,7 +80,7 @@ export function ChatWidget() {
       {/* Chat container with glassmorphic effect */}
       <div className="backdrop-blur-xl bg-slate-800/50 border border-slate-700/50 rounded-2xl shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6">
+        <div className="bg-gradient-to-r from-indigo-600 to-cyan-600 p-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
               <LogoIcon variant="white" size={24} />
@@ -108,7 +108,7 @@ export function ChatWidget() {
                 <div
                   className={`max-w-[80%] p-4 rounded-2xl ${
                     message.sender === 'user'
-                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white'
+                      ? 'bg-gradient-to-r from-indigo-600 to-cyan-600 text-white'
                       : 'backdrop-blur-xl bg-slate-800/80 border border-slate-700/50 text-slate-100'
                   }`}
                 >
@@ -170,7 +170,7 @@ export function ChatWidget() {
             />
             <Button
               onClick={handleSend}
-              className="px-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 hover:shadow-lg hover:shadow-indigo-500/25 transition-all duration-300"
+              className="px-6 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 hover:shadow-lg hover:shadow-indigo-500/25 transition-all duration-300"
             >
               <Send className="w-5 h-5" />
             </Button>

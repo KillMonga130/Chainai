@@ -57,7 +57,7 @@ export function Navigation() {
                 className="text-slate-400 dark:text-slate-400 light:text-slate-600 hover:text-white dark:hover:text-white light:hover:text-slate-900 transition-colors duration-200 relative group"
               >
                 {item}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-600 group-hover:w-full transition-all duration-300" />
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-500 to-cyan-600 group-hover:w-full transition-all duration-300" />
               </motion.button>
             ))}
             
@@ -106,7 +106,7 @@ export function Navigation() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => scrollToSection('try-now')}
-              className="px-6 py-2 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:shadow-lg hover:shadow-indigo-500/25 transition-all duration-300"
+              className="px-6 py-2 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-600 text-white font-medium hover:shadow-lg hover:shadow-indigo-500/25 transition-all duration-300"
             >
               Get Started
             </motion.button>
@@ -146,7 +146,7 @@ export function Navigation() {
                 ))}
                 <button
                   onClick={() => scrollToSection('try-now')}
-                  className="w-full px-4 py-3 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium"
+                  className="w-full px-4 py-3 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-600 text-white font-medium"
                 >
                   Get Started
                 </button>

@@ -3,7 +3,8 @@ import { generateAuthToken } from '../services/watsonx-auth';
 import { motion } from 'motion/react';
 import { Sparkles, RefreshCw, Copy, Check } from 'lucide-react';
 import { LogoIcon } from './Logo';
-import { fetchSupplyChainReports, formatReport } from '../services/reliefweb';
+import { fetchSupplyChainReports, formatReport, searchCrisis } from '../services/reliefweb';
+import { fetchWeatherByCoordinates, fetchWeatherByCity, getLogisticsImpact } from '../services/openweathermap';
 import { toast } from 'sonner';
 
 declare global {
@@ -129,6 +130,69 @@ export function IBMChatWidget() {
     }
   };
 
+  // Prepare context data for IBM watsonx agents (injected in pre:send event)
+  const fetchLiveDataForContext = async (query: string) => {
+    try {
+      // 1) Search ReliefWeb using query; fallback to recent reports
+      let reports = await searchCrisis(query);
+      if (!reports || reports.length === 0) {
+        reports = await fetchSupplyChainReports(5);
+      }
+
+      // 2) Try to infer a location from the first report
+      let weather: any | null = null;
+      const first = reports?.[0];
+      const primaryCountry = first?.fields?.country?.[0];
+      if (primaryCountry) {
+        const loc = primaryCountry?.location?.[0];
+        if (loc && typeof loc.lat === 'number' && typeof loc.lon === 'number') {
+          weather = await fetchWeatherByCoordinates(loc.lat, loc.lon);
+        } else if (primaryCountry?.name) {
+          weather = await fetchWeatherByCity(primaryCountry.name);
+        }
+      }
+
+      // 3) Format data for agent consumption
+      const formattedReports = reports.slice(0, 3).map((r: any) => ({
+        title: r.fields.title,
+        country: r.fields.country?.map((c: any) => c.name).join(', ') || 'Global',
+        date: r.fields.date?.created,
+        themes: r.fields.theme?.map((t: any) => t.name).join(', ') || 'General',
+        url: r.fields.url,
+        disaster: r.fields.disaster?.map((d: any) => d.name).join(', ') || 'N/A'
+      }));
+
+      const weatherSummary = weather ? {
+        location: weather.location,
+        country: weather.country,
+        temperature_celsius: weather.temperature,
+        conditions: weather.conditions,
+        description: weather.description,
+        humidity_percent: weather.humidity,
+        wind_speed_kmh: weather.windSpeed,
+        visibility_km: weather.visibility,
+        logistics_impact: getLogisticsImpact(weather)
+      } : null;
+
+      // 4) Create crisis summary for agent
+      const crisisSummary = `Query: "${query}"\n` +
+        `Recent reports (${formattedReports.length}): ${formattedReports.map(r => r.title).join('; ')}\n` +
+        `Affected regions: ${formattedReports.map(r => r.country).filter((v, i, a) => a.indexOf(v) === i).join(', ')}\n` +
+        `Weather conditions: ${weatherSummary ? `${weatherSummary.location} - ${weatherSummary.conditions}, ${weatherSummary.temperature_celsius}°C. ${weatherSummary.logistics_impact}` : 'No weather data available'}`;
+
+      return {
+        reports: formattedReports,
+        weather: weatherSummary,
+        summary: crisisSummary,
+        query: query,
+        timestamp: new Date().toISOString()
+      };
+    } catch (e) {
+      console.error('[Chain AI] Error fetching context data:', e);
+      return null;
+    }
+  };
+
   useEffect(() => {
     // Obtain auth token (IAM or unsecured fallback)
     (async () => {
@@ -188,6 +252,64 @@ export function IBMChatWidget() {
     script.addEventListener('load', () => {
       if (window.wxoLoader) {
         window.wxoLoader.init();
+        
+        // Hook into widget events for context injection
+        const checkWidget = setInterval(() => {
+          const widgetInstance = (window as any).wxO?.widget;
+          if (widgetInstance) {
+            clearInterval(checkWidget);
+            
+            console.log('[Chain AI] IBM watsonx Orchestrate widget loaded - hooking pre:send event');
+            
+            // Inject live ReliefWeb + Weather data before each message is sent
+            widgetInstance.on('pre:send', async (event: any) => {
+              console.log('[Chain AI] Pre-send event - enriching with live data', event);
+              try {
+                const text: string | undefined =
+                  event?.message?.input?.text ||
+                  event?.data?.input?.text ||
+                  event?.input ||
+                  event?.text;
+                
+                if (typeof text === 'string' && text.trim().length > 0) {
+                  // Fetch real-time crisis + weather data
+                  const contextData = await fetchLiveDataForContext(text.trim());
+                  
+                  // IBM watsonx Orchestrate supports context variables
+                  // Inject our external data so agents can use it
+                  if (contextData && event.data) {
+                    event.data.context = {
+                      ...event.data.context,
+                      skills: {
+                        ...event.data.context?.skills,
+                        'main skill': {
+                          ...event.data.context?.skills?.['main skill'],
+                          user_defined: {
+                            ...event.data.context?.skills?.['main skill']?.user_defined,
+                            reliefweb_reports: contextData.reports,
+                            weather_data: contextData.weather,
+                            crisis_context: contextData.summary
+                          }
+                        }
+                      }
+                    };
+                    console.log('[Chain AI] ✓ Injected real-time context:', {
+                      reports: contextData.reports.length,
+                      weather: contextData.weather?.location || 'N/A',
+                      summary: contextData.summary.substring(0, 100) + '...'
+                    });
+                  }
+                }
+              } catch (e) {
+                console.warn('[Chain AI] Error enriching message with live data:', e);
+                // Non-blocking - chat continues even if enrichment fails
+              }
+            });
+          }
+        }, 500); // Check every 500ms for widget instance
+        
+        // Stop checking after 10 seconds
+        setTimeout(() => clearInterval(checkWidget), 10000);
       }
     });
     document.head.appendChild(script);

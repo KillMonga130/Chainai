@@ -24,6 +24,7 @@ import { fetchSupplyChainReports } from '../services/reliefweb';
 import { toast } from 'sonner';
 import { AGENTS, WatsonXAgent } from '../services/watsonx-config';
 import { WatsonXChat } from './WatsonXChat';
+import { notifyApprovalRequired, notifyCriticalDisruption } from '../services/whatsapp-notification';
 
 interface Agent {
   id: string;
@@ -133,9 +134,10 @@ export function ChainAISupervisor({ agent: propAgent }: ChainAISupervisorProps =
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+  // Auto-scroll disabled to prevent forced scrolling during demo
+  // useEffect(() => {
+  //   scrollToBottom();
+  // }, [messages]);
 
   const handleApprove = async (selectedStrategies: number[]) => {
     setAwaitingApproval(false);
@@ -381,6 +383,45 @@ export function ChainAISupervisor({ agent: propAgent }: ChainAISupervisorProps =
     toast.info('Awaiting Human Approval', {
       description: 'Review the recommended mitigation strategies'
     });
+
+    // Send WhatsApp notification for high-cost approvals
+    const highestCost = Math.max(
+      ...recommendations.mitigationStrategies.map(s => 
+        parseInt(s.cost.replace(/[^0-9]/g, ''))
+      )
+    );
+    
+    if (highestCost > 10000) {
+      // Extract location and cargo type from user query
+      const location = userQuery.match(/\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b/)?.[0] || 'Unknown';
+      const cargoType = userQuery.toLowerCase().includes('vaccine') ? 'Vaccines' :
+                        userQuery.toLowerCase().includes('blood') ? 'Blood supplies' :
+                        userQuery.toLowerCase().includes('medical') ? 'Medical supplies' :
+                        'Critical cargo';
+      
+      notifyApprovalRequired(
+        'HIGH',
+        location,
+        cargoType,
+        recommendations.impact.criticalSupplies.length * 100, // Estimated people
+        highestCost,
+        recommendations.mitigationStrategies[0].timeline
+      ).then(success => {
+        if (success) {
+          toast.success('WhatsApp notification sent', {
+            description: 'Approval request delivered to your phone'
+          });
+        }
+      });
+    }
+
+    // Also notify for critical disruptions
+    notifyCriticalDisruption(
+      'HIGH',
+      userQuery.match(/\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b/)?.[0] || 'Unknown',
+      userQuery.toLowerCase().includes('vaccine') ? 'Vaccines' : 'Critical supplies',
+      500
+    );
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -438,7 +479,7 @@ export function ChainAISupervisor({ agent: propAgent }: ChainAISupervisorProps =
             <Sparkles className="w-5 h-5 text-indigo-400" />
           </div>
           <div>
-            <h3 className="dark:text-white light:text-slate-900">IBM watsonx Orchestrate</h3>
+            <h3 className="dark:text-white light:text-slate-700">IBM watsonx Orchestrate</h3>
             <p className="text-sm dark:text-slate-400 light:text-slate-600">Real-time AI agent integration</p>
           </div>
         </div>
@@ -475,12 +516,14 @@ export function ChainAISupervisor({ agent: propAgent }: ChainAISupervisorProps =
         </div>
       </motion.div>
 
-      <div className={chatMode === 'live' && propAgent ? 'w-full' : 'grid lg:grid-cols-3 gap-6'}>
-        {/* Agent Status Panel - Only show in Live mode when no external agent selector */}
-        {chatMode === 'live' && !propAgent && (
+      <div className={chatMode === 'live' ? 'w-full' : 'grid lg:grid-cols-3 gap-6'}>
+        {/* Agent Status Panel - Only show in Demo mode */}
+        <AnimatePresence>
+        {chatMode === 'demo' && (
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
           className="lg:col-span-1"
         >
           <div className="backdrop-blur-xl dark:bg-slate-800/50 light:bg-white/80 border dark:border-slate-700/50 light:border-slate-300 rounded-2xl overflow-hidden sticky top-24">
@@ -492,8 +535,8 @@ export function ChainAISupervisor({ agent: propAgent }: ChainAISupervisorProps =
                     <Cpu className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-white">{chatMode === 'live' ? 'Select Agent' : 'Agent Status'}</h3>
-                    <p className="text-white/80 text-xs">{chatMode === 'live' ? 'Choose an AI agent' : 'Multi-agent system'}</p>
+                    <h3 className="text-white">Agent Status</h3>
+                    <p className="text-white/80 text-xs">Multi-agent system</p>
                   </div>
                 </div>
                 <button
@@ -514,48 +557,9 @@ export function ChainAISupervisor({ agent: propAgent }: ChainAISupervisorProps =
                   exit={{ height: 0, opacity: 0 }}
                   className="p-4 space-y-3"
                 >
-                  {chatMode === 'live' ? (
-                    // Live Mode: Agent Selector
-                    AGENTS.map((watsonAgent, index) => {
-                      const Icon = agents.find(a => a.id === watsonAgent.id)?.icon || Cpu;
-                      const isSelected = selectedAgent.id === watsonAgent.id;
-                      return (
-                        <motion.button
-                          key={watsonAgent.id}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.1 }}
-                          onClick={() => setSelectedAgent(watsonAgent)}
-                          className={`w-full text-left backdrop-blur-xl rounded-xl p-4 border transition-all ${
-                            isSelected
-                              ? 'dark:bg-indigo-900/30 light:bg-indigo-50 border-indigo-500 shadow-lg shadow-indigo-500/25'
-                              : 'dark:bg-slate-900/50 light:bg-slate-100 dark:border-slate-700/30 light:border-slate-200 hover:border-indigo-500/50'
-                          }`}
-                        >
-                          <div className="flex items-start gap-3">
-                            <div className={`p-2 rounded-lg ${isSelected ? 'bg-indigo-500/30' : `bg-${watsonAgent.color}-500/20`}`}>
-                              <Icon className={`w-5 h-5 ${isSelected ? 'text-indigo-400' : `text-${watsonAgent.color}-400`}`} />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-1">
-                                <h4 className="dark:text-white light:text-slate-700 text-sm">{watsonAgent.name}</h4>
-                                {isSelected && (
-                                  <div className="px-2 py-0.5 rounded-full bg-green-400/20 border border-green-400/30 text-green-400 text-xs flex items-center gap-1">
-                                    <CheckCircle className="w-3 h-3" />
-                                    <span>Active</span>
-                                  </div>
-                                )}
-                              </div>
-                              <p className="text-slate-400 dark:text-slate-400 light:text-slate-600 text-xs">{watsonAgent.description}</p>
-                            </div>
-                          </div>
-                        </motion.button>
-                      );
-                    })
-                  ) : (
-                    // Demo Mode: Original agent status display
-                    agents.map((agent, index) => {
-                      const Icon = agent.icon;
+                  {/* Demo Mode: Agent status display */}
+                  {agents.map((agent, index) => {
+                    const Icon = agent.icon;
                       return (
                         <motion.div
                           key={agent.id}
@@ -593,21 +597,21 @@ export function ChainAISupervisor({ agent: propAgent }: ChainAISupervisorProps =
                           )}
                         </motion.div>
                       );
-                    })
-                  )}
+                    })}
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
         </motion.div>
         )}
+        </AnimatePresence>
 
         {/* Chat Interface */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className={chatMode === 'live' && propAgent ? 'w-full' : chatMode === 'demo' ? 'w-full' : 'lg:col-span-2'}
+          className={chatMode === 'live' ? 'w-full' : 'lg:col-span-2'}
         >
           <div className="backdrop-blur-xl dark:bg-slate-800/50 light:bg-white/80 border dark:border-slate-700/50 light:border-slate-300 rounded-2xl overflow-hidden shadow-2xl">
             {/* Chat Header */}
@@ -699,7 +703,7 @@ export function ChainAISupervisor({ agent: propAgent }: ChainAISupervisorProps =
             {awaitingApproval && approvalData && chatMode === 'demo' && (
               <div className="p-6 dark:bg-slate-900/50 light:bg-slate-50 border-t dark:border-slate-700/50 light:border-slate-200">
                 <div className="mb-4">
-                  <h3 className="text-lg font-semibold dark:text-white light:text-slate-900 mb-2">Review Mitigation Strategies</h3>
+                  <h3 className="text-lg font-semibold dark:text-white light:text-slate-700 mb-2">Review Mitigation Strategies</h3>
                   <p className="text-sm dark:text-slate-400 light:text-slate-600">Select strategies to approve for implementation</p>
                 </div>
 
@@ -708,7 +712,7 @@ export function ChainAISupervisor({ agent: propAgent }: ChainAISupervisorProps =
                     <div key={strategy.id} className="dark:bg-slate-800/50 light:bg-white border dark:border-slate-700 light:border-slate-300 rounded-lg p-4">
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex-1">
-                          <h4 className="font-medium dark:text-white light:text-slate-900">{strategy.title}</h4>
+                          <h4 className="font-medium dark:text-white light:text-slate-700">{strategy.title}</h4>
                           <p className="text-sm dark:text-slate-400 light:text-slate-600 mt-1">{strategy.impact}</p>
                         </div>
                         <input
@@ -722,11 +726,11 @@ export function ChainAISupervisor({ agent: propAgent }: ChainAISupervisorProps =
                       <div className="grid grid-cols-3 gap-4 mt-3 text-sm">
                         <div>
                           <span className="dark:text-slate-500 light:text-slate-400">Cost:</span>
-                          <span className="ml-2 dark:text-white light:text-slate-900">{strategy.cost}</span>
+                          <span className="ml-2 dark:text-white light:text-slate-700">{strategy.cost}</span>
                         </div>
                         <div>
                           <span className="dark:text-slate-500 light:text-slate-400">Timeline:</span>
-                          <span className="ml-2 dark:text-white light:text-slate-900">{strategy.timeline}</span>
+                          <span className="ml-2 dark:text-white light:text-slate-700">{strategy.timeline}</span>
                         </div>
                         <div>
                           <span className="dark:text-slate-500 light:text-slate-400">Risk:</span>
@@ -767,7 +771,7 @@ export function ChainAISupervisor({ agent: propAgent }: ChainAISupervisorProps =
                         handleReject(reason);
                       }
                     }}
-                    className="flex-1 px-6 py-3 dark:bg-slate-700/50 light:bg-slate-200 dark:text-white light:text-slate-900 rounded-xl hover:bg-red-500/20 hover:text-red-400 dark:hover:text-red-400 light:hover:text-red-600 transition-all duration-300 flex items-center justify-center gap-2"
+                    className="flex-1 px-6 py-3 dark:bg-slate-700/50 light:bg-slate-200 dark:text-white light:text-slate-700 rounded-xl hover:bg-red-500/20 hover:text-red-400 dark:hover:text-red-400 light:hover:text-red-600 transition-all duration-300 flex items-center justify-center gap-2"
                   >
                     <XCircle className="w-5 h-5" />
                     <span>Reject & Revise</span>
@@ -786,7 +790,7 @@ export function ChainAISupervisor({ agent: propAgent }: ChainAISupervisorProps =
                   onChange={(e) => setInput(e.target.value)}
                   disabled={isProcessing}
                   placeholder="Describe a supply chain disruption..."
-                  className="flex-1 px-4 py-3 dark:bg-slate-900/50 light:bg-slate-100 border dark:border-slate-700 light:border-slate-300 rounded-xl dark:text-white light:text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 disabled:opacity-50"
+                  className="flex-1 px-4 py-3 dark:bg-slate-900/50 light:bg-slate-100 border dark:border-slate-700 light:border-slate-300 rounded-xl dark:text-white light:text-slate-700 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 disabled:opacity-50"
                 />
                 <button
                   type="submit"

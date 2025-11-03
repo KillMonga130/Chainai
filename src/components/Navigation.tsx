@@ -20,7 +20,7 @@ export function Navigation() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className="fixed top-0 left-0 right-0 z-[var(--z-sticky)] bg-slate-900/80 dark:bg-slate-900/80 light:bg-white/90 backdrop-blur-lg border-b border-slate-800/50 dark:border-slate-800/50 light:border-slate-200"
+      className="fixed top-0 left-0 right-0 z-[var(--z-sticky)] dark:bg-slate-900/80 light:bg-white/90 backdrop-blur-lg border-b dark:border-slate-800/50 light:border-slate-200"
     >
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex justify-between items-center h-20">

@@ -17,7 +17,7 @@ export function AgentCard({ number, title, description, status, index = 0 }: Age
       viewport={{ once: true }}
       transition={{ delay: index * 0.1, duration: 0.5 }}
       whileHover={{ x: 8, scale: 1.02 }}
-      className="group relative overflow-hidden rounded-xl bg-slate-800/50 dark:bg-slate-800/50 light:bg-white/80 backdrop-blur-sm border-l-4 border-indigo-500 p-6 hover:shadow-2xl hover:shadow-indigo-500/20 transition-all duration-300"
+      className="group relative overflow-hidden rounded-xl dark:bg-slate-800/50 light:bg-white/80 backdrop-blur-sm border-l-4 border-indigo-500 p-6 hover:shadow-2xl hover:shadow-indigo-500/20 transition-all duration-300"
     >
       {/* Background gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />

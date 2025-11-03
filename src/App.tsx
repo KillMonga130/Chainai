@@ -40,7 +40,7 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      <div className="min-h-screen bg-slate-950 dark:bg-slate-950 light:bg-gradient-to-b light:from-slate-50 light:to-white relative overflow-x-hidden">
+      <div className="min-h-screen dark:bg-slate-950 light:bg-gradient-to-b light:from-slate-50 light:to-white relative overflow-x-hidden">
         {/* Animated background patterns */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           {/* Gradient orbs */}
@@ -146,7 +146,7 @@ export default function App() {
                 className="relative"
               >
                 {/* Main card */}
-                <div className="relative backdrop-blur-xl bg-slate-800/50 dark:bg-slate-800/50 light:bg-white/70 border border-slate-700/50 dark:border-slate-700/50 light:border-slate-200 rounded-3xl p-8 shadow-2xl">
+                <div className="relative backdrop-blur-xl dark:bg-slate-800/50 light:bg-white/70 border dark:border-slate-700/50 light:border-slate-200 rounded-3xl p-8 shadow-2xl">
                   {/* Logo */}
                   <div className="flex justify-center mb-8">
                     <div className="p-6 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl shadow-lg">
@@ -168,7 +168,7 @@ export default function App() {
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.4 + index * 0.1 }}
-                        className="flex items-center gap-4 p-4 bg-slate-900/50 dark:bg-slate-900/50 light:bg-slate-50 rounded-xl border border-slate-700/30 dark:border-slate-700/30 light:border-slate-200"
+                        className="flex items-center gap-4 p-4 dark:bg-slate-900/50 light:bg-slate-50 rounded-xl border dark:border-slate-700/30 light:border-slate-200"
                       >
                         <div className="p-2 bg-indigo-500/20 rounded-lg">
                           <agent.icon className="w-5 h-5 text-indigo-400" />
@@ -414,7 +414,7 @@ export default function App() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.4 }}
-                className="backdrop-blur-xl bg-slate-800/30 dark:bg-slate-800/30 light:bg-white/70 rounded-2xl p-8 border border-slate-700/30 dark:border-slate-700/30 light:border-slate-200"
+                className="backdrop-blur-xl dark:bg-slate-800/30 light:bg-white/70 rounded-2xl p-8 border dark:border-slate-700/30 light:border-slate-200"
               >
                 <h3 className="text-white dark:text-white light:text-slate-900 font-semibold mb-4 text-xl">Humanitarian Impact</h3>
                 <p className="text-slate-300 dark:text-slate-300 light:text-slate-700 leading-relaxed mb-4">
@@ -464,7 +464,7 @@ export default function App() {
         {/* Technology Section */}
         <section className="py-24 px-6 relative">
           <div className="max-w-7xl mx-auto">
-            <div className="backdrop-blur-xl bg-slate-800/30 dark:bg-slate-800/30 light:bg-white/70 border border-slate-700/50 dark:border-slate-700/50 light:border-slate-200 rounded-3xl p-12 shadow-2xl">
+            <div className="backdrop-blur-xl dark:bg-slate-800/30 light:bg-white/70 border dark:border-slate-700/50 light:border-slate-200 rounded-3xl p-12 shadow-2xl">
               <div className="max-w-3xl mx-auto text-center mb-12">
                 <h2 className="text-4xl md:text-5xl font-bold text-white dark:text-white light:text-slate-900 mb-6">
                   Powered by{' '}
@@ -480,7 +480,7 @@ export default function App() {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  className="backdrop-blur-xl bg-slate-800/50 dark:bg-slate-800/50 light:bg-white border border-slate-700/50 dark:border-slate-700/50 light:border-slate-200 rounded-xl p-6 text-center hover:border-indigo-500/30 transition-all duration-300"
+                  className="backdrop-blur-xl dark:bg-slate-800/50 light:bg-white border dark:border-slate-700/50 light:border-slate-200 rounded-xl p-6 text-center hover:border-indigo-500/30 transition-all duration-300"
                 >
                   <Network className="w-12 h-12 text-indigo-400 mx-auto mb-4" />
                   <h3 className="text-white dark:text-white light:text-slate-900 font-semibold mb-2">Multi-Agent System</h3>
@@ -494,7 +494,7 @@ export default function App() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.1 }}
-                  className="backdrop-blur-xl bg-slate-800/50 dark:bg-slate-800/50 light:bg-white border border-slate-700/50 dark:border-slate-700/50 light:border-slate-200 rounded-xl p-6 text-center hover:border-purple-500/30 transition-all duration-300"
+                  className="backdrop-blur-xl dark:bg-slate-800/50 light:bg-white border dark:border-slate-700/50 light:border-slate-200 rounded-xl p-6 text-center hover:border-purple-500/30 transition-all duration-300"
                 >
                   <Search className="w-12 h-12 text-purple-400 mx-auto mb-4" />
                   <h3 className="text-white dark:text-white light:text-slate-900 font-semibold mb-2">Real-Time Analysis</h3>
@@ -508,7 +508,7 @@ export default function App() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.2 }}
-                  className="backdrop-blur-xl bg-slate-800/50 dark:bg-slate-800/50 light:bg-white border border-slate-700/50 dark:border-slate-700/50 light:border-slate-200 rounded-xl p-6 text-center hover:border-teal-500/30 transition-all duration-300"
+                  className="backdrop-blur-xl dark:bg-slate-800/50 light:bg-white border dark:border-slate-700/50 light:border-slate-200 rounded-xl p-6 text-center hover:border-teal-500/30 transition-all duration-300"
                 >
                   <Lightbulb className="w-12 h-12 text-teal-400 mx-auto mb-4" />
                   <h3 className="text-white dark:text-white light:text-slate-900 font-semibold mb-2">Intelligent Insights</h3>
@@ -523,9 +523,9 @@ export default function App() {
         </div>
 
         {/* Footer */}
-        <footer className="py-12 px-6 border-t border-slate-800/50 dark:border-slate-800/50 light:border-slate-200 relative">
+        <footer className="py-12 px-6 border-t dark:border-slate-800/50 light:border-slate-200 relative">
           <div className="max-w-7xl mx-auto">
-            <div className="backdrop-blur-xl bg-slate-800/20 dark:bg-slate-800/20 light:bg-white/60 rounded-2xl p-8">
+            <div className="backdrop-blur-xl dark:bg-slate-800/20 light:bg-white/60 rounded-2xl p-8">
               {/* Logo and tagline */}
               <div className="text-center mb-8">
                 <div className="flex justify-center mb-4">

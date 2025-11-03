@@ -126,7 +126,7 @@ export function IBMChatWidget() {
       className="w-full max-w-4xl mx-auto"
     >
       {/* Chat container with glassmorphic effect */}
-      <div className="backdrop-blur-xl bg-slate-800/50 dark:bg-slate-800/50 light:bg-white/80 border border-slate-700/50 dark:border-slate-700/50 light:border-slate-300 rounded-2xl shadow-2xl overflow-hidden">
+      <div className="backdrop-blur-xl dark:bg-slate-800/50 light:bg-white/80 border dark:border-slate-700/50 light:border-slate-300 rounded-2xl shadow-2xl overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6">
           <div className="flex items-center gap-3 mb-2">
@@ -142,7 +142,7 @@ export function IBMChatWidget() {
         </div>
 
         {/* Quick prompts - Real ReliefWeb Data */}
-        <div className="p-4 bg-slate-800/30 dark:bg-slate-800/30 light:bg-slate-100 backdrop-blur-sm border-t border-slate-700/50 dark:border-slate-700/50 light:border-slate-200">
+        <div className="p-4 dark:bg-slate-800/30 light:bg-slate-100 backdrop-blur-sm border-t dark:border-slate-700/50 light:border-slate-200">
           <div className="flex items-center justify-between mb-3">
             <p className="text-slate-400 dark:text-slate-400 light:text-slate-600 text-sm">Real-time crisis data from ReliefWeb:</p>
             <button
@@ -161,7 +161,7 @@ export function IBMChatWidget() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="px-3 py-2 backdrop-blur-xl bg-slate-700/50 dark:bg-slate-700/50 light:bg-white border border-slate-600/50 dark:border-slate-600/50 light:border-slate-300 rounded-lg hover:bg-slate-700/70 dark:hover:bg-slate-700/70 light:hover:bg-slate-50 hover:border-indigo-500/50 transition-all duration-300 text-slate-300 dark:text-slate-300 light:text-slate-700 text-sm cursor-pointer"
+                className="px-3 py-2 backdrop-blur-xl dark:bg-slate-700/50 light:bg-white border dark:border-slate-600/50 light:border-slate-300 rounded-lg dark:hover:bg-slate-700/70 light:hover:bg-slate-50 hover:border-indigo-500/50 transition-all duration-300 dark:text-slate-300 light:text-slate-700 text-sm cursor-pointer"
               >
                 {prompt}
               </motion.div>
@@ -173,7 +173,7 @@ export function IBMChatWidget() {
         <div 
           id="ibm-chat-root" 
           ref={chatContainerRef}
-          className="min-h-[500px] bg-slate-900/50 dark:bg-slate-900/50 light:bg-slate-50"
+          className="min-h-[500px] dark:bg-slate-900/50 light:bg-slate-50"
         />
       </div>
 
@@ -183,7 +183,7 @@ export function IBMChatWidget() {
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ delay: 0.3 }}
-        className="mt-6 backdrop-blur-xl bg-slate-800/30 dark:bg-slate-800/30 light:bg-slate-100/80 border border-slate-700/50 dark:border-slate-700/50 light:border-slate-300 rounded-xl p-4 text-center"
+        className="mt-6 backdrop-blur-xl dark:bg-slate-800/30 light:bg-slate-100/80 border dark:border-slate-700/50 light:border-slate-300 rounded-xl p-4 text-center"
       >
         <p className="text-slate-400 dark:text-slate-400 light:text-slate-600 text-sm">
           <strong className="text-indigo-400 dark:text-indigo-400 light:text-indigo-600">Live AI Analysis:</strong> Multi-agent system powered by IBM watsonx Orchestrate, using real humanitarian crisis data from ReliefWeb API.

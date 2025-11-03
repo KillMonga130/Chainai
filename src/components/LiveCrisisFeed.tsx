@@ -42,7 +42,7 @@ export function LiveCrisisFeed() {
   };
 
   return (
-    <div className="backdrop-blur-xl bg-slate-800/30 dark:bg-slate-800/30 light:bg-white/70 border border-slate-700/50 dark:border-slate-700/50 light:border-slate-200 rounded-2xl p-6">
+    <div className="backdrop-blur-xl dark:bg-slate-800/30 light:bg-white/70 border dark:border-slate-700/50 light:border-slate-200 rounded-2xl p-6">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-red-500/20 rounded-lg">
@@ -65,8 +65,8 @@ export function LiveCrisisFeed() {
         <div className="space-y-3">
           {[1, 2, 3].map(i => (
             <div key={i} className="animate-pulse">
-              <div className="h-4 bg-slate-700/50 dark:bg-slate-700/50 light:bg-slate-200 rounded w-3/4 mb-2" />
-              <div className="h-3 bg-slate-700/50 dark:bg-slate-700/50 light:bg-slate-200 rounded w-1/2" />
+              <div className="h-4 dark:bg-slate-700/50 light:bg-slate-200 rounded w-3/4 mb-2" />
+              <div className="h-3 dark:bg-slate-700/50 light:bg-slate-200 rounded w-1/2" />
             </div>
           ))}
         </div>
@@ -78,7 +78,7 @@ export function LiveCrisisFeed() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="group p-4 bg-slate-900/30 dark:bg-slate-900/30 light:bg-slate-50 border border-slate-700/30 dark:border-slate-700/30 light:border-slate-200 rounded-xl hover:bg-slate-900/50 dark:hover:bg-slate-900/50 light:hover:bg-white hover:border-indigo-500/30 transition-all duration-300"
+              className="group p-4 dark:bg-slate-900/30 light:bg-slate-50 border dark:border-slate-700/30 light:border-slate-200 rounded-xl dark:hover:bg-slate-900/50 light:hover:bg-white hover:border-indigo-500/30 transition-all duration-300"
             >
               <h4 className="text-white dark:text-white light:text-slate-900 text-sm font-medium mb-3 line-clamp-2 group-hover:text-indigo-400 dark:group-hover:text-indigo-400 light:group-hover:text-indigo-600 transition-colors">
                 {report.title}

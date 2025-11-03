@@ -1118,16 +1118,6 @@
     }
   }
 
-  .border-slate-600\/50 {
-    border-color: color-mix(in srgb, oklch(.446 .043 257.281) 50%, transparent);
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .border-slate-600\/50 {
-      border-color: color-mix(in oklab, var(--color-slate-600) 50%, transparent);
-    }
-  }
-
   .border-slate-700 {
     border-color: var(--color-slate-700);
   }
@@ -1149,16 +1139,6 @@
   @supports (color: color-mix(in lab, red, red)) {
     .border-slate-700\/50 {
       border-color: color-mix(in oklab, var(--color-slate-700) 50%, transparent);
-    }
-  }
-
-  .border-slate-800\/50 {
-    border-color: color-mix(in srgb, oklch(.279 .041 260.031) 50%, transparent);
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .border-slate-800\/50 {
-      border-color: color-mix(in oklab, var(--color-slate-800) 50%, transparent);
     }
   }
 
@@ -1312,26 +1292,6 @@
     background-color: var(--secondary);
   }
 
-  .bg-slate-700\/50 {
-    background-color: color-mix(in srgb, oklch(.372 .044 257.287) 50%, transparent);
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .bg-slate-700\/50 {
-      background-color: color-mix(in oklab, var(--color-slate-700) 50%, transparent);
-    }
-  }
-
-  .bg-slate-800\/20 {
-    background-color: color-mix(in srgb, oklch(.279 .041 260.031) 20%, transparent);
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .bg-slate-800\/20 {
-      background-color: color-mix(in oklab, var(--color-slate-800) 20%, transparent);
-    }
-  }
-
   .bg-slate-800\/30 {
     background-color: color-mix(in srgb, oklch(.279 .041 260.031) 30%, transparent);
   }
@@ -1340,50 +1300,6 @@
     .bg-slate-800\/30 {
       background-color: color-mix(in oklab, var(--color-slate-800) 30%, transparent);
     }
-  }
-
-  .bg-slate-800\/50 {
-    background-color: color-mix(in srgb, oklch(.279 .041 260.031) 50%, transparent);
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .bg-slate-800\/50 {
-      background-color: color-mix(in oklab, var(--color-slate-800) 50%, transparent);
-    }
-  }
-
-  .bg-slate-900\/30 {
-    background-color: color-mix(in srgb, oklch(.208 .042 265.755) 30%, transparent);
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .bg-slate-900\/30 {
-      background-color: color-mix(in oklab, var(--color-slate-900) 30%, transparent);
-    }
-  }
-
-  .bg-slate-900\/50 {
-    background-color: color-mix(in srgb, oklch(.208 .042 265.755) 50%, transparent);
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .bg-slate-900\/50 {
-      background-color: color-mix(in oklab, var(--color-slate-900) 50%, transparent);
-    }
-  }
-
-  .bg-slate-900\/80 {
-    background-color: color-mix(in srgb, oklch(.208 .042 265.755) 80%, transparent);
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .bg-slate-900\/80 {
-      background-color: color-mix(in oklab, var(--color-slate-900) 80%, transparent);
-    }
-  }
-
-  .bg-slate-950 {
-    background-color: var(--color-slate-950);
   }
 
   .bg-teal-400 {
@@ -2178,18 +2094,6 @@
   }
 
   @media (hover: hover) {
-    .hover\:bg-slate-700\/70:hover {
-      background-color: color-mix(in srgb, oklch(.372 .044 257.287) 70%, transparent);
-    }
-
-    @supports (color: color-mix(in lab, red, red)) {
-      .hover\:bg-slate-700\/70:hover {
-        background-color: color-mix(in oklab, var(--color-slate-700) 70%, transparent);
-      }
-    }
-  }
-
-  @media (hover: hover) {
     .hover\:bg-slate-800\/50:hover {
       background-color: color-mix(in srgb, oklch(.279 .041 260.031) 50%, transparent);
     }
@@ -2197,18 +2101,6 @@
     @supports (color: color-mix(in lab, red, red)) {
       .hover\:bg-slate-800\/50:hover {
         background-color: color-mix(in oklab, var(--color-slate-800) 50%, transparent);
-      }
-    }
-  }
-
-  @media (hover: hover) {
-    .hover\:bg-slate-900\/50:hover {
-      background-color: color-mix(in srgb, oklch(.208 .042 265.755) 50%, transparent);
-    }
-
-    @supports (color: color-mix(in lab, red, red)) {
-      .hover\:bg-slate-900\/50:hover {
-        background-color: color-mix(in oklab, var(--color-slate-900) 50%, transparent);
       }
     }
   }

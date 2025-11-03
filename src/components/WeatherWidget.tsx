@@ -33,12 +33,12 @@ export function WeatherWidget({ city, countryCode, compact = false }: WeatherWid
 
   if (loading) {
     return compact ? (
-      <div className="backdrop-blur-xl bg-slate-800/30 dark:bg-slate-800/30 light:bg-white/70 border border-slate-700/50 dark:border-slate-700/50 light:border-slate-200 rounded-lg px-3 py-2 animate-pulse">
-        <div className="h-8 bg-slate-700/50 dark:bg-slate-700/50 light:bg-slate-200 rounded" />
+      <div className="backdrop-blur-xl dark:bg-slate-800/30 light:bg-white/70 border dark:border-slate-700/50 light:border-slate-200 rounded-lg px-3 py-2 animate-pulse">
+        <div className="h-8 dark:bg-slate-700/50 light:bg-slate-200 rounded" />
       </div>
     ) : (
-      <div className="backdrop-blur-xl bg-slate-800/30 dark:bg-slate-800/30 light:bg-white/70 border border-slate-700/50 dark:border-slate-700/50 light:border-slate-200 rounded-xl p-4 animate-pulse">
-        <div className="h-20 bg-slate-700/50 dark:bg-slate-700/50 light:bg-slate-200 rounded" />
+      <div className="backdrop-blur-xl dark:bg-slate-800/30 light:bg-white/70 border dark:border-slate-700/50 light:border-slate-200 rounded-xl p-4 animate-pulse">
+        <div className="h-20 dark:bg-slate-700/50 light:bg-slate-200 rounded" />
       </div>
     );
   }

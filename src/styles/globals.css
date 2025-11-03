@@ -144,6 +144,8 @@
   html {
     font-size: var(--font-size);
     scroll-behavior: smooth;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 
   body {
@@ -151,6 +153,13 @@
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  
+  #root {
+    min-height: 100vh;
   }
 }
 

@@ -1,10 +1,13 @@
+import './services/error-suppressor'; // MUST BE FIRST - suppress known errors
+import './services/error-suppressor'; // MUST BE FIRST - suppress known errors
+import './services/i18n'; // Initialize i18next mock
 import { useEffect, useRef } from 'react';
 import { ThemeProvider } from './components/ThemeProvider';
 import { Navigation } from './components/Navigation';
 import { FeatureCard } from './components/FeatureCard';
 import { AgentCard } from './components/AgentCard';
 import { MetricCard } from './components/MetricCard';
-import { IBMChatWidget } from './components/IBMChatWidget';
+import { ChainAISupervisor } from './components/ChainAISupervisor';
 import { LiveCrisisFeed } from './components/LiveCrisisFeed';
 import { ChainAILogo } from './components/Logo';
 import { Toaster } from './components/ui/sonner';
@@ -33,18 +36,35 @@ import {
 export default function App() {
   const heroRef = useRef<HTMLDivElement>(null);
 
-  // 3D Background Effect (Vanta.js alternative - using CSS only for performance)
+  // Initialization
   useEffect(() => {
-    // Particle animation could go here
-    // For now, using pure CSS animations for better performance
+    // Authentication status console message
+    console.log(
+      '%c🔐 Chain AI Security System',
+      'color: #4f46e5; font-size: 16px; font-weight: bold;'
+    );
+    console.log(
+      '%c✅ Security is DISABLED - no authentication required',
+      'color: #10b981; font-size: 12px;'
+    );
+    console.log(
+      '%cℹ️ To monitor connection status:',
+      'color: #6366f1; font-size: 12px;'
+    );
+    console.log('   1. Click the Settings icon (⚙️) in the navigation');
+    console.log('   2. View Connection Status and Configuration Validator');
+    console.log(
+      '%c📖 Make sure security is disabled on your watsonx instance',
+      'color: #f59e0b; font-size: 12px;'
+    );
   }, []);
 
   return (
     <ThemeProvider>
       <Toaster position="top-right" theme="dark" richColors />
-      <div className="min-h-screen dark:bg-slate-950 light:bg-gradient-to-b light:from-slate-50 light:to-white relative overflow-x-hidden">
+      <div className="min-h-screen w-full overflow-y-auto dark:bg-slate-950 light:bg-gradient-to-b light:from-slate-50 light:to-white relative">
         {/* Animated background patterns */}
-        <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
           {/* Gradient orbs */}
           <div className="absolute top-0 left-1/4 w-96 h-96 dark:bg-indigo-500/20 light:bg-indigo-500/10 rounded-full mix-blend-multiply filter blur-3xl animate-float" />
           <div className="absolute top-1/3 right-1/4 w-96 h-96 dark:bg-purple-500/20 light:bg-purple-500/10 rounded-full mix-blend-multiply filter blur-3xl animate-float" style={{ animationDelay: '2s' }} />
@@ -58,7 +78,7 @@ export default function App() {
         <Navigation />
 
         {/* Main Content */}
-        <div className="relative z-10 pt-20">
+        <main className="relative z-10 pt-20 w-full overflow-y-auto">
         {/* Hero Section */}
         <section ref={heroRef} className="min-h-screen flex items-center justify-center px-6 py-20">
           <div className="max-w-7xl mx-auto w-full">
@@ -104,7 +124,7 @@ export default function App() {
                     onClick={() => document.getElementById('try-now')?.scrollIntoView({ behavior: 'smooth' })}
                     className="group px-8 py-4 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold text-lg shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/40 transition-all duration-300 flex items-center justify-center gap-2"
                   >
-                    <span>Try Chain AI Now</span>
+                    <span>Try Supervisor AI</span>
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </motion.button>
                   
@@ -434,14 +454,14 @@ export default function App() {
           </div>
         </section>
 
-        {/* Chat Widget Section */}
+        {/* Chain AI Supervisor Section */}
         <section id="try-now" className="py-24 px-6 relative">
           <div className="max-w-7xl mx-auto">
             {/* Live Crisis Feed */}
             <div className="mb-16">
               <LiveCrisisFeed />
             </div>
-            <div className="max-w-3xl mx-auto text-center mb-12">
+            <div className="max-w-5xl mx-auto text-center mb-12">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -451,15 +471,15 @@ export default function App() {
                   Try It Now
                 </span>
                 <h2 className="text-4xl md:text-5xl font-bold text-white dark:text-white light:text-slate-900 mb-6">
-                  Experience Chain AI
+                  Chain AI Supervisor
                 </h2>
                 <p className="text-xl text-slate-400 dark:text-slate-400 light:text-slate-600 leading-relaxed">
-                  Report a supply chain disruption and see how our multi-agent system analyzes and provides solutions
+                  Interact with our multi-agent orchestration system. The Supervisor coordinates 5 specialized AI agents to analyze supply chain disruptions in real-time.
                 </p>
               </motion.div>
             </div>
 
-            <IBMChatWidget />
+            <ChainAISupervisor />
           </div>
         </section>
 
@@ -522,10 +542,10 @@ export default function App() {
             </div>
           </div>
         </section>
-        </div>
+        </main>
 
         {/* Footer */}
-        <footer className="py-12 px-6 border-t dark:border-slate-800/50 light:border-slate-200 relative">
+        <footer className="py-12 px-6 border-t dark:border-slate-800/50 light:border-slate-200 relative z-10">
           <div className="max-w-7xl mx-auto">
             <div className="backdrop-blur-xl dark:bg-slate-800/20 light:bg-white/60 rounded-2xl p-8">
               {/* Logo and tagline */}

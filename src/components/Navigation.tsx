@@ -1,11 +1,23 @@
 import { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Settings } from 'lucide-react';
 import { ChainAILogo } from './Logo';
 import { ThemeToggle } from './ThemeToggle';
 import { motion, AnimatePresence } from 'motion/react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from './ui/dialog';
+import { WatsonXConnectionStatus } from './WatsonXConnectionStatus';
+import { WatsonXSetupValidator } from './WatsonXSetupValidator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 
 export function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showDiagnostics, setShowDiagnostics] = useState(false);
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -51,6 +63,41 @@ export function Navigation() {
             
             {/* Theme Toggle */}
             <ThemeToggle />
+            
+            {/* Diagnostics Dialog */}
+            <Dialog open={showDiagnostics} onOpenChange={setShowDiagnostics}>
+              <DialogTrigger asChild>
+                <motion.button
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.65 }}
+                  className="p-2 text-slate-400 hover:text-white dark:hover:text-white light:hover:text-slate-900 hover:bg-slate-800/50 rounded-lg transition-all duration-300"
+                  title="System Diagnostics"
+                >
+                  <Settings className="w-5 h-5" />
+                </motion.button>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto backdrop-blur-xl dark:bg-slate-900/95 light:bg-white/95 border dark:border-slate-700 light:border-slate-300">
+                <DialogHeader>
+                  <DialogTitle className="dark:text-white light:text-slate-900">System Diagnostics</DialogTitle>
+                  <DialogDescription className="dark:text-slate-400 light:text-slate-600">
+                    Monitor IBM watsonx Orchestrate connection and validate configuration
+                  </DialogDescription>
+                </DialogHeader>
+                <Tabs defaultValue="status" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="status">Connection Status</TabsTrigger>
+                    <TabsTrigger value="validator">Configuration Validator</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="status" className="mt-6">
+                    <WatsonXConnectionStatus />
+                  </TabsContent>
+                  <TabsContent value="validator" className="mt-6">
+                    <WatsonXSetupValidator />
+                  </TabsContent>
+                </Tabs>
+              </DialogContent>
+            </Dialog>
             
             <motion.button
               initial={{ opacity: 0, scale: 0.8 }}

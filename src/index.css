@@ -76,6 +76,7 @@
     --color-yellow-400: oklch(.852 .199 91.936);
     --color-yellow-500: oklch(.795 .184 86.047);
     --color-green-300: oklch(.871 .15 154.449);
+    --color-green-400: oklch(.792 .209 151.711);
     --color-green-500: oklch(.723 .219 149.579);
     --color-teal-400: oklch(.777 .152 181.912);
     --color-teal-500: oklch(.704 .14 182.503);
@@ -100,6 +101,7 @@
     --color-slate-950: oklch(.129 .042 264.695);
     --color-white: #fff;
     --spacing: .25rem;
+    --container-2xl: 42rem;
     --container-3xl: 48rem;
     --container-4xl: 56rem;
     --container-7xl: 80rem;
@@ -775,10 +777,6 @@
     height: 1px;
   }
 
-  .min-h-\[500px\] {
-    min-height: 500px;
-  }
-
   .min-h-screen {
     min-height: 100vh;
   }
@@ -853,6 +851,10 @@
 
   .w-full {
     width: 100%;
+  }
+
+  .max-w-2xl {
+    max-width: var(--container-2xl);
   }
 
   .max-w-3xl {
@@ -1200,6 +1202,10 @@
     background-color: var(--destructive);
   }
 
+  .bg-green-400 {
+    background-color: var(--color-green-400);
+  }
+
   .bg-green-500\/10 {
     background-color: color-mix(in srgb, oklch(.723 .219 149.579) 10%, transparent);
   }
@@ -1254,16 +1260,6 @@
     }
   }
 
-  .bg-purple-500\/20 {
-    background-color: color-mix(in srgb, oklch(.627 .265 303.9) 20%, transparent);
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .bg-purple-500\/20 {
-      background-color: color-mix(in oklab, var(--color-purple-500) 20%, transparent);
-    }
-  }
-
   .bg-red-500 {
     background-color: var(--color-red-500);
   }
@@ -1290,16 +1286,6 @@
 
   .bg-secondary {
     background-color: var(--secondary);
-  }
-
-  .bg-slate-800\/30 {
-    background-color: color-mix(in srgb, oklch(.279 .041 260.031) 30%, transparent);
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .bg-slate-800\/30 {
-      background-color: color-mix(in oklab, var(--color-slate-800) 30%, transparent);
-    }
   }
 
   .bg-teal-400 {
@@ -1364,10 +1350,6 @@
   .bg-gradient-to-r {
     --tw-gradient-position: to right in oklab;
     background-image: linear-gradient(var(--tw-gradient-stops));
-  }
-
-  .bg-\[linear-gradient\(rgba\(79\,70\,229\,0\.03\)_1px\,transparent_1px\)\,linear-gradient\(90deg\,rgba\(79\,70\,229\,0\.03\)_1px\,transparent_1px\)\] {
-    background-image: linear-gradient(#4f46e508 1px, #0000 1px), linear-gradient(90deg, #4f46e508 1px, #0000 1px);
   }
 
   .from-indigo-500 {
@@ -1738,6 +1720,10 @@
     color: var(--color-green-300);
   }
 
+  .text-green-400 {
+    color: var(--color-green-400);
+  }
+
   .text-indigo-400 {
     color: var(--color-indigo-400);
   }
@@ -1797,16 +1783,6 @@
   @supports (color: color-mix(in lab, red, red)) {
     .text-white\/60 {
       color: color-mix(in oklab, var(--color-white) 60%, transparent);
-    }
-  }
-
-  .text-white\/80 {
-    color: #fffc;
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .text-white\/80 {
-      color: color-mix(in oklab, var(--color-white) 80%, transparent);
     }
   }
 
@@ -2296,6 +2272,16 @@
     }
   }
 
+  .dark\:border-indigo-500\/20:is(.dark *) {
+    border-color: color-mix(in srgb, oklch(.585 .233 277.117) 20%, transparent);
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .dark\:border-indigo-500\/20:is(.dark *) {
+      border-color: color-mix(in oklab, var(--color-indigo-500) 20%, transparent);
+    }
+  }
+
   .dark\:border-slate-600\/50:is(.dark *) {
     border-color: color-mix(in srgb, oklch(.446 .043 257.281) 50%, transparent);
   }
@@ -2347,6 +2333,16 @@
   @supports (color: color-mix(in lab, red, red)) {
     .dark\:bg-destructive\/60:is(.dark *) {
       background-color: color-mix(in oklab, var(--destructive) 60%, transparent);
+    }
+  }
+
+  .dark\:bg-indigo-500\/10:is(.dark *) {
+    background-color: color-mix(in srgb, oklch(.585 .233 277.117) 10%, transparent);
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .dark\:bg-indigo-500\/10:is(.dark *) {
+      background-color: color-mix(in oklab, var(--color-indigo-500) 10%, transparent);
     }
   }
 
@@ -2478,6 +2474,10 @@
     .dark\:to-purple-900\/30:is(.dark *) {
       --tw-gradient-to: color-mix(in oklab, var(--color-purple-900) 30%, transparent);
     }
+  }
+
+  .dark\:text-indigo-300:is(.dark *) {
+    color: var(--color-indigo-300);
   }
 
   .dark\:text-indigo-400:is(.dark *) {

@@ -57,7 +57,7 @@ export function WeatherWidget({ city, countryCode, compact = false }: WeatherWid
 
   if (compact) {
     return (
-      <div className={`backdrop-blur-xl bg-slate-800/30 dark:bg-slate-800/30 light:bg-white/70 border ${severityColors[severity]} rounded-lg px-3 py-2 flex items-center gap-3`}>
+      <div className={`backdrop-blur-xl dark:bg-slate-800/30 light:bg-white/70 border ${severityColors[severity]} rounded-lg px-3 py-2 flex items-center gap-3`}>
         <img 
           src={getWeatherIconUrl(weather.icon)} 
           alt={weather.description}
@@ -84,7 +84,7 @@ export function WeatherWidget({ city, countryCode, compact = false }: WeatherWid
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`backdrop-blur-xl bg-slate-800/30 dark:bg-slate-800/30 light:bg-white/70 border ${severityColors[severity]} rounded-xl p-6`}
+      className={`backdrop-blur-xl dark:bg-slate-800/30 light:bg-white/70 border ${severityColors[severity]} rounded-xl p-6`}
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-4">

@@ -7,39 +7,56 @@ interface ThemeContextType {
   toggleTheme: () => void;
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+const ThemeContext = createContext<ThemeContextType>({
+  theme: 'dark',
+  toggleTheme: () => {},
+});
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>('dark');
   const [mounted, setMounted] = useState(false);
 
+  // Mount and load saved theme
   useEffect(() => {
     setMounted(true);
-    // Check for saved theme preference or default to 'dark'
-    const savedTheme = localStorage.getItem('theme') as Theme | null;
-    if (savedTheme) {
-      setTheme(savedTheme);
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark' || savedTheme === 'light') {
+          setTheme(savedTheme);
+        }
+      }
+    } catch (e) {
+      // Ignore localStorage errors
     }
   }, []);
 
+  // Apply theme to DOM
   useEffect(() => {
     if (!mounted) return;
     
-    const root = document.documentElement;
-    
-    // Remove both classes first
-    root.classList.remove('light', 'dark');
-    
-    // Add the current theme
-    root.classList.add(theme);
-    
-    // Save to localStorage
-    localStorage.setItem('theme', theme);
+    try {
+      if (typeof document !== 'undefined' && document.documentElement) {
+        const root = document.documentElement;
+        root.classList.remove('light', 'dark');
+        root.classList.add(theme);
+      }
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('theme', theme);
+      }
+    } catch (e) {
+      // Ignore errors
+    }
   }, [theme, mounted]);
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
   };
+
+  // Don't render until mounted
+  if (!mounted) {
+    return <div className="dark">{children}</div>;
+  }
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
@@ -50,8 +67,5 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
 export function useTheme() {
   const context = useContext(ThemeContext);
-  if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
   return context;
 }

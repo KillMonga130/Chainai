@@ -7,6 +7,7 @@ import { MetricCard } from './components/MetricCard';
 import { IBMChatWidget } from './components/IBMChatWidget';
 import { LiveCrisisFeed } from './components/LiveCrisisFeed';
 import { ChainAILogo } from './components/Logo';
+import { Toaster } from './components/ui/sonner';
 import { motion } from 'motion/react';
 import { 
   Zap, 
@@ -40,16 +41,17 @@ export default function App() {
 
   return (
     <ThemeProvider>
+      <Toaster position="top-right" theme="dark" richColors />
       <div className="min-h-screen dark:bg-slate-950 light:bg-gradient-to-b light:from-slate-50 light:to-white relative overflow-x-hidden">
         {/* Animated background patterns */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           {/* Gradient orbs */}
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-500/20 dark:bg-indigo-500/20 light:bg-indigo-500/10 rounded-full mix-blend-multiply filter blur-3xl animate-float" />
-          <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-purple-500/20 dark:bg-purple-500/20 light:bg-purple-500/10 rounded-full mix-blend-multiply filter blur-3xl animate-float" style={{ animationDelay: '2s' }} />
-          <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-teal-500/20 dark:bg-teal-500/20 light:bg-teal-500/10 rounded-full mix-blend-multiply filter blur-3xl animate-float" style={{ animationDelay: '4s' }} />
+          <div className="absolute top-0 left-1/4 w-96 h-96 dark:bg-indigo-500/20 light:bg-indigo-500/10 rounded-full mix-blend-multiply filter blur-3xl animate-float" />
+          <div className="absolute top-1/3 right-1/4 w-96 h-96 dark:bg-purple-500/20 light:bg-purple-500/10 rounded-full mix-blend-multiply filter blur-3xl animate-float" style={{ animationDelay: '2s' }} />
+          <div className="absolute bottom-1/4 left-1/3 w-96 h-96 dark:bg-teal-500/20 light:bg-teal-500/10 rounded-full mix-blend-multiply filter blur-3xl animate-float" style={{ animationDelay: '4s' }} />
           
           {/* Grid pattern */}
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(79,70,229,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(79,70,229,0.03)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(79,70,229,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(79,70,229,0.03)_1px,transparent_1px)] light:bg-[linear-gradient(rgba(79,70,229,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(79,70,229,0.05)_1px,transparent_1px)] bg-[size:100px_100px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,black,transparent)]" />
+          <div className="absolute inset-0 dark:bg-[linear-gradient(rgba(79,70,229,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(79,70,229,0.03)_1px,transparent_1px)] light:bg-[linear-gradient(rgba(79,70,229,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(79,70,229,0.05)_1px,transparent_1px)] bg-[size:100px_100px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,black,transparent)]" />
         </div>
 
         {/* Navigation */}

@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
-import { Sparkles, RefreshCw } from 'lucide-react';
+import { Sparkles, RefreshCw, Copy, Check } from 'lucide-react';
 import { LogoIcon } from './Logo';
-import { fetchSupplyChainReports, formatReport } from '../services/reliefweb';
+import { fetchSupplyChainReports } from '../services/reliefweb';
+import { toast } from 'sonner@2.0.3';
 
 declare global {
   interface Window {
     wxOConfiguration?: {
       orchestrationID: string;
       hostURL: string;
-      rootElementID: string;
       deploymentPlatform: string;
       crn: string;
       chatOptions: {
@@ -24,13 +24,13 @@ declare global {
 }
 
 export function IBMChatWidget() {
-  const chatContainerRef = useRef<HTMLDivElement>(null);
   const [quickPrompts, setQuickPrompts] = useState<string[]>([
     "Analyze recent humanitarian supply chain disruptions",
     "Check current logistics challenges in crisis zones",
     "Review ongoing disaster impacts on medical supplies"
   ]);
   const [isLoadingPrompts, setIsLoadingPrompts] = useState(false);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
   // Load real crisis data from ReliefWeb
   useEffect(() => {
@@ -53,6 +53,85 @@ export function IBMChatWidget() {
       console.error('Error loading crisis data:', error);
     } finally {
       setIsLoadingPrompts(false);
+    }
+  };
+
+  const handlePromptClick = (prompt: string, index: number) => {
+    const textToCopy = `Analyze this crisis: ${prompt}`;
+    
+    // Fallback method that works in all browsers and permission contexts
+    const fallbackCopyTextToClipboard = (text: string) => {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      
+      // Avoid scrolling to bottom
+      textArea.style.top = "0";
+      textArea.style.left = "0";
+      textArea.style.position = "fixed";
+      textArea.style.opacity = "0";
+      
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      
+      try {
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
+        return successful;
+      } catch (err) {
+        document.body.removeChild(textArea);
+        return false;
+      }
+    };
+    
+    // Try modern Clipboard API first, fall back to execCommand
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(textToCopy)
+        .then(() => {
+          setCopiedIndex(index);
+          toast.success('Prompt copied!', {
+            description: 'Click the chat button (bottom right) to paste and start analysis'
+          });
+          
+          setTimeout(() => {
+            setCopiedIndex(null);
+          }, 2000);
+        })
+        .catch(() => {
+          // If Clipboard API fails, use fallback
+          const success = fallbackCopyTextToClipboard(textToCopy);
+          if (success) {
+            setCopiedIndex(index);
+            toast.success('Prompt copied!', {
+              description: 'Click the chat button (bottom right) to paste and start analysis'
+            });
+            
+            setTimeout(() => {
+              setCopiedIndex(null);
+            }, 2000);
+          } else {
+            toast.error('Failed to copy prompt', {
+              description: 'Please copy manually: ' + prompt.substring(0, 50) + '...'
+            });
+          }
+        });
+    } else {
+      // Use fallback directly if Clipboard API not available
+      const success = fallbackCopyTextToClipboard(textToCopy);
+      if (success) {
+        setCopiedIndex(index);
+        toast.success('Prompt copied!', {
+          description: 'Click the chat button (bottom right) to paste and start analysis'
+        });
+        
+        setTimeout(() => {
+          setCopiedIndex(null);
+        }, 2000);
+      } else {
+        toast.error('Failed to copy prompt', {
+          description: 'Please copy manually: ' + prompt.substring(0, 50) + '...'
+        });
+      }
     }
   };
 
@@ -84,10 +163,10 @@ export function IBMChatWidget() {
     };
 
     // Configure IBM watsonx Orchestrate
+    // WITHOUT rootElementID to enable the floating chat button
     window.wxOConfiguration = {
       orchestrationID: "c139b03f7afb4bc7b617216e3046ac5b_6e4a398d-0f34-42ad-9706-1f16af156856",
       hostURL: "https://us-south.watson-orchestrate.cloud.ibm.com",
-      rootElementID: "ibm-chat-root",
       deploymentPlatform: "ibmcloud",
       crn: "crn:v1:bluemix:public:watsonx-orchestrate:us-south:a/c139b03f7afb4bc7b617216e3046ac5b:6e4a398d-0f34-42ad-9706-1f16af156856::",
       chatOptions: {
@@ -99,10 +178,16 @@ export function IBMChatWidget() {
     // Load the IBM watsonx Orchestrate script
     const script = document.createElement('script');
     script.src = `${window.wxOConfiguration.hostURL}/wxochat/wxoLoader.js?embed=true`;
+    script.async = true;
     script.addEventListener('load', () => {
+      console.log('IBM watsonx Orchestrate script loaded');
       if (window.wxoLoader) {
         window.wxoLoader.init();
+        console.log('IBM watsonx Orchestrate initialized - floating button should appear at bottom right');
       }
+    });
+    script.addEventListener('error', (error) => {
+      console.error('Failed to load IBM watsonx Orchestrate script:', error);
     });
     document.head.appendChild(script);
 
@@ -134,8 +219,8 @@ export function IBMChatWidget() {
               <LogoIcon variant="white" size={24} />
             </div>
             <div>
-              <h3 className="text-white font-semibold">Chain AI Supervisor</h3>
-              <p className="text-white/80 text-sm">Powered by IBM watsonx Orchestrate</p>
+              <h3 className="text-white">Chain AI Supervisor</h3>
+              <p className="text-white/90 text-sm">Powered by IBM watsonx Orchestrate</p>
             </div>
             <Sparkles className="ml-auto w-5 h-5 text-white/60 animate-pulse-glow" />
           </div>
@@ -144,7 +229,10 @@ export function IBMChatWidget() {
         {/* Quick prompts - Real ReliefWeb Data */}
         <div className="p-4 dark:bg-slate-800/30 light:bg-slate-100 backdrop-blur-sm border-t dark:border-slate-700/50 light:border-slate-200">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-slate-400 dark:text-slate-400 light:text-slate-600 text-sm">Real-time crisis data from ReliefWeb:</p>
+            <div>
+              <p className="text-slate-400 dark:text-slate-400 light:text-slate-600 text-sm font-medium">Real-time crisis data from ReliefWeb</p>
+              <p className="text-slate-500 dark:text-slate-500 light:text-slate-500 text-xs mt-0.5">Click to copy, then use the chat button at bottom right →</p>
+            </div>
             <button
               onClick={loadRealCrisisData}
               disabled={isLoadingPrompts}
@@ -156,25 +244,35 @@ export function IBMChatWidget() {
           </div>
           <div className="flex flex-col gap-2">
             {quickPrompts.map((prompt, index) => (
-              <motion.div
+              <motion.button
                 key={index}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="px-3 py-2 backdrop-blur-xl dark:bg-slate-700/50 light:bg-white border dark:border-slate-600/50 light:border-slate-300 rounded-lg dark:hover:bg-slate-700/70 light:hover:bg-slate-50 hover:border-indigo-500/50 transition-all duration-300 dark:text-slate-300 light:text-slate-700 text-sm cursor-pointer"
+                onClick={() => handlePromptClick(prompt, index)}
+                className="px-3 py-2 backdrop-blur-xl dark:bg-slate-700/50 light:bg-white border dark:border-slate-600/50 light:border-slate-300 rounded-lg dark:hover:bg-slate-700/70 light:hover:bg-slate-50 hover:border-indigo-500/50 transition-all duration-300 dark:text-slate-300 light:text-slate-700 text-sm cursor-pointer text-left flex items-start gap-2 group"
               >
-                {prompt}
-              </motion.div>
+                <span className="flex-1">{prompt}</span>
+                {copiedIndex === index ? (
+                  <Check className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
+                ) : (
+                  <Copy className="w-4 h-4 text-slate-400 dark:text-slate-400 light:text-slate-500 flex-shrink-0 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                )}
+              </motion.button>
             ))}
           </div>
         </div>
 
-        {/* IBM watsonx Orchestrate Chat Embed */}
-        <div 
-          id="ibm-chat-root" 
-          ref={chatContainerRef}
-          className="min-h-[500px] dark:bg-slate-900/50 light:bg-slate-50"
-        />
+        {/* Info Section */}
+        <div className="p-6 dark:bg-slate-900/50 light:bg-slate-50 border-t dark:border-slate-700/50 light:border-slate-200 text-center">
+          <div className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full dark:bg-indigo-500/10 light:bg-indigo-100 border dark:border-indigo-500/20 light:border-indigo-300 mb-3">
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+            <span className="text-sm dark:text-indigo-300 light:text-indigo-700">IBM watsonx Orchestrate Active</span>
+          </div>
+          <p className="text-slate-400 dark:text-slate-400 light:text-slate-600 text-sm max-w-2xl mx-auto">
+            Look for the <strong>floating chat button at the bottom right</strong> of your screen. Click it to open the IBM watsonx AI assistant and paste your copied crisis analysis prompts.
+          </p>
+        </div>
       </div>
 
       {/* Info note */}

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { ChainAILogo } from './Logo';
+import { ThemeToggle } from './ThemeToggle';
 import { motion, AnimatePresence } from 'motion/react';
 
 export function Navigation() {
@@ -19,7 +20,7 @@ export function Navigation() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className="fixed top-0 left-0 right-0 z-[var(--z-sticky)] bg-slate-900/80 backdrop-blur-lg border-b border-slate-800/50"
+      className="fixed top-0 left-0 right-0 z-[var(--z-sticky)] bg-slate-900/80 dark:bg-slate-900/80 light:bg-white/90 backdrop-blur-lg border-b border-slate-800/50 dark:border-slate-800/50 light:border-slate-200"
     >
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex justify-between items-center h-20">
@@ -33,7 +34,7 @@ export function Navigation() {
           </motion.div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-6">
             {['Features', 'Agents', 'Impact', 'Try Now'].map((item, index) => (
               <motion.button
                 key={item}
@@ -41,12 +42,15 @@ export function Navigation() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 + index * 0.1 }}
                 onClick={() => scrollToSection(item.toLowerCase().replace(' ', '-'))}
-                className="text-slate-400 hover:text-white transition-colors duration-200 relative group"
+                className="text-slate-400 dark:text-slate-400 light:text-slate-600 hover:text-white dark:hover:text-white light:hover:text-slate-900 transition-colors duration-200 relative group"
               >
                 {item}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-600 group-hover:w-full transition-all duration-300" />
               </motion.button>
             ))}
+            
+            {/* Theme Toggle */}
+            <ThemeToggle />
             
             <motion.button
               initial={{ opacity: 0, scale: 0.8 }}
@@ -61,13 +65,16 @@ export function Navigation() {
             </motion.button>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-2 text-white hover:bg-slate-800/50 rounded-lg transition-colors"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          {/* Mobile Menu Button & Theme Toggle */}
+          <div className="md:hidden flex items-center gap-3">
+            <ThemeToggle />
+            <button
+              className="p-2 text-white dark:text-white light:text-slate-900 hover:bg-slate-800/50 dark:hover:bg-slate-800/50 light:hover:bg-slate-100 rounded-lg transition-colors"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
@@ -85,7 +92,7 @@ export function Navigation() {
                   <button
                     key={item}
                     onClick={() => scrollToSection(item.toLowerCase().replace(' ', '-'))}
-                    className="block w-full text-left px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200"
+                    className="block w-full text-left px-4 py-3 text-slate-400 dark:text-slate-400 light:text-slate-600 hover:text-white dark:hover:text-white light:hover:text-slate-900 hover:bg-slate-800/50 dark:hover:bg-slate-800/50 light:hover:bg-slate-100 rounded-lg transition-all duration-200"
                   >
                     {item}
                   </button>

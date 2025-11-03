@@ -1,9 +1,11 @@
 import { useEffect, useRef } from 'react';
+import { ThemeProvider } from './components/ThemeProvider';
 import { Navigation } from './components/Navigation';
 import { FeatureCard } from './components/FeatureCard';
 import { AgentCard } from './components/AgentCard';
 import { MetricCard } from './components/MetricCard';
-import { ChatWidget } from './components/ChatWidget';
+import { IBMChatWidget } from './components/IBMChatWidget';
+import { LiveCrisisFeed } from './components/LiveCrisisFeed';
 import { ChainAILogo } from './components/Logo';
 import { motion } from 'motion/react';
 import { 
@@ -37,23 +39,24 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-950 relative overflow-x-hidden">
-      {/* Animated background patterns */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        {/* Gradient orbs */}
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-500/20 rounded-full mix-blend-multiply filter blur-3xl animate-float" />
-        <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full mix-blend-multiply filter blur-3xl animate-float" style={{ animationDelay: '2s' }} />
-        <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-teal-500/20 rounded-full mix-blend-multiply filter blur-3xl animate-float" style={{ animationDelay: '4s' }} />
-        
-        {/* Grid pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(79,70,229,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(79,70,229,0.03)_1px,transparent_1px)] bg-[size:100px_100px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,black,transparent)]" />
-      </div>
+    <ThemeProvider>
+      <div className="min-h-screen bg-slate-950 dark:bg-slate-950 light:bg-gradient-to-b light:from-slate-50 light:to-white relative overflow-x-hidden">
+        {/* Animated background patterns */}
+        <div className="fixed inset-0 overflow-hidden pointer-events-none">
+          {/* Gradient orbs */}
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-500/20 dark:bg-indigo-500/20 light:bg-indigo-500/10 rounded-full mix-blend-multiply filter blur-3xl animate-float" />
+          <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-purple-500/20 dark:bg-purple-500/20 light:bg-purple-500/10 rounded-full mix-blend-multiply filter blur-3xl animate-float" style={{ animationDelay: '2s' }} />
+          <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-teal-500/20 dark:bg-teal-500/20 light:bg-teal-500/10 rounded-full mix-blend-multiply filter blur-3xl animate-float" style={{ animationDelay: '4s' }} />
+          
+          {/* Grid pattern */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(79,70,229,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(79,70,229,0.03)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(79,70,229,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(79,70,229,0.03)_1px,transparent_1px)] light:bg-[linear-gradient(rgba(79,70,229,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(79,70,229,0.05)_1px,transparent_1px)] bg-[size:100px_100px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,black,transparent)]" />
+        </div>
 
-      {/* Navigation */}
-      <Navigation />
+        {/* Navigation */}
+        <Navigation />
 
-      {/* Main Content */}
-      <div className="relative z-10 pt-20">
+        {/* Main Content */}
+        <div className="relative z-10 pt-20">
         {/* Hero Section */}
         <section ref={heroRef} className="min-h-screen flex items-center justify-center px-6 py-20">
           <div className="max-w-7xl mx-auto w-full">
@@ -76,14 +79,14 @@ export default function App() {
                 </motion.div>
 
                 {/* Title */}
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white dark:text-white light:text-slate-900 mb-6 leading-tight">
                   Emergency{' '}
                   <span className="gradient-text">Supply Chain</span>{' '}
                   Response
                 </h1>
 
                 {/* Subtitle */}
-                <p className="text-xl text-slate-400 mb-8 leading-relaxed">
+                <p className="text-xl text-slate-400 dark:text-slate-400 light:text-slate-600 mb-8 leading-relaxed">
                   Save lives by making critical supply chain decisions{' '}
                   <span className="text-teal-400 font-semibold">80% faster</span>.
                   Chain AI analyzes humanitarian crises in{' '}
@@ -107,7 +110,7 @@ export default function App() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="px-8 py-4 rounded-full border-2 border-slate-700 text-slate-300 font-semibold text-lg hover:border-indigo-500 hover:text-white hover:bg-indigo-500/10 transition-all duration-300"
+                    className="px-8 py-4 rounded-full border-2 border-slate-700 dark:border-slate-700 light:border-slate-300 text-slate-300 dark:text-slate-300 light:text-slate-700 font-semibold text-lg hover:border-indigo-500 hover:text-white dark:hover:text-white light:hover:text-indigo-600 hover:bg-indigo-500/10 transition-all duration-300"
                   >
                     Learn More
                   </motion.button>
@@ -122,15 +125,15 @@ export default function App() {
                 >
                   <div>
                     <div className="text-3xl font-bold gradient-text">20min</div>
-                    <div className="text-sm text-slate-500">Analysis Time</div>
+                    <div className="text-sm text-slate-500 dark:text-slate-500 light:text-slate-400">Analysis Time</div>
                   </div>
                   <div>
                     <div className="text-3xl font-bold gradient-text">80%</div>
-                    <div className="text-sm text-slate-500">Faster</div>
+                    <div className="text-sm text-slate-500 dark:text-slate-500 light:text-slate-400">Faster</div>
                   </div>
                   <div>
                     <div className="text-3xl font-bold gradient-text">5</div>
-                    <div className="text-sm text-slate-500">AI Agents</div>
+                    <div className="text-sm text-slate-500 dark:text-slate-500 light:text-slate-400">AI Agents</div>
                   </div>
                 </motion.div>
               </motion.div>
@@ -143,7 +146,7 @@ export default function App() {
                 className="relative"
               >
                 {/* Main card */}
-                <div className="relative backdrop-blur-xl bg-slate-800/50 border border-slate-700/50 rounded-3xl p-8 shadow-2xl">
+                <div className="relative backdrop-blur-xl bg-slate-800/50 dark:bg-slate-800/50 light:bg-white/70 border border-slate-700/50 dark:border-slate-700/50 light:border-slate-200 rounded-3xl p-8 shadow-2xl">
                   {/* Logo */}
                   <div className="flex justify-center mb-8">
                     <div className="p-6 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl shadow-lg">
@@ -165,14 +168,14 @@ export default function App() {
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.4 + index * 0.1 }}
-                        className="flex items-center gap-4 p-4 bg-slate-900/50 rounded-xl border border-slate-700/30"
+                        className="flex items-center gap-4 p-4 bg-slate-900/50 dark:bg-slate-900/50 light:bg-slate-50 rounded-xl border border-slate-700/30 dark:border-slate-700/30 light:border-slate-200"
                       >
                         <div className="p-2 bg-indigo-500/20 rounded-lg">
                           <agent.icon className="w-5 h-5 text-indigo-400" />
                         </div>
                         <div className="flex-1">
-                          <div className="text-white font-medium text-sm">{agent.label}</div>
-                          <div className="text-slate-500 text-xs">{agent.status}</div>
+                          <div className="text-white dark:text-white light:text-slate-900 font-medium text-sm">{agent.label}</div>
+                          <div className="text-slate-500 dark:text-slate-500 light:text-slate-400 text-xs">{agent.status}</div>
                         </div>
                         <div className="w-2 h-2 bg-teal-400 rounded-full animate-pulse" />
                       </motion.div>
@@ -214,10 +217,10 @@ export default function App() {
                 <span className="inline-block px-4 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-sm font-medium mb-4">
                   Features
                 </span>
-                <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                <h2 className="text-4xl md:text-5xl font-bold text-white dark:text-white light:text-slate-900 mb-6">
                   Why Chain AI
                 </h2>
-                <p className="text-xl text-slate-400 leading-relaxed">
+                <p className="text-xl text-slate-400 dark:text-slate-400 light:text-slate-600 leading-relaxed">
                   Revolutionary AI-powered supply chain analysis that saves lives and reduces response time by 80%
                 </p>
               </motion.div>
@@ -332,8 +335,8 @@ export default function App() {
                 className="backdrop-blur-xl bg-gradient-to-br from-teal-500/10 to-teal-600/10 border border-teal-500/30 rounded-xl p-6 flex flex-col justify-center"
               >
                 <CheckCircle className="w-12 h-12 text-teal-400 mb-4" />
-                <h3 className="text-white font-semibold mb-4">System Features</h3>
-                <ul className="text-slate-300 space-y-3">
+                <h3 className="text-white dark:text-white light:text-slate-900 font-semibold mb-4">System Features</h3>
+                <ul className="text-slate-300 dark:text-slate-300 light:text-slate-700 space-y-3">
                   <li className="flex items-start gap-2">
                     <div className="w-1.5 h-1.5 bg-teal-400 rounded-full mt-2" />
                     <span>Human approval gate before action</span>
@@ -359,7 +362,7 @@ export default function App() {
         {/* Impact Metrics Section */}
         <section id="impact" className="py-24 px-6 relative">
           <div className="max-w-7xl mx-auto">
-            <div className="backdrop-blur-xl bg-gradient-to-br from-indigo-900/30 to-purple-900/30 border border-slate-700/50 rounded-3xl p-12 shadow-2xl">
+            <div className="backdrop-blur-xl bg-gradient-to-br from-indigo-900/30 to-purple-900/30 dark:from-indigo-900/30 dark:to-purple-900/30 light:from-indigo-50 light:to-purple-50 border border-slate-700/50 dark:border-slate-700/50 light:border-indigo-200 rounded-3xl p-12 shadow-2xl">
               <div className="max-w-3xl mx-auto text-center mb-12">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -369,10 +372,10 @@ export default function App() {
                   <span className="inline-block px-4 py-1 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 text-sm font-medium mb-4">
                     Impact
                   </span>
-                  <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                  <h2 className="text-4xl md:text-5xl font-bold text-white dark:text-white light:text-slate-900 mb-6">
                     Global Impact
                   </h2>
-                  <p className="text-xl text-slate-300 leading-relaxed">
+                  <p className="text-xl text-slate-300 dark:text-slate-300 light:text-slate-600 leading-relaxed">
                     Real-world results from faster, smarter supply chain decisions
                   </p>
                 </motion.div>
@@ -411,15 +414,15 @@ export default function App() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.4 }}
-                className="backdrop-blur-xl bg-slate-800/30 rounded-2xl p-8 border border-slate-700/30"
+                className="backdrop-blur-xl bg-slate-800/30 dark:bg-slate-800/30 light:bg-white/70 rounded-2xl p-8 border border-slate-700/30 dark:border-slate-700/30 light:border-slate-200"
               >
-                <h3 className="text-white font-semibold mb-4 text-xl">Humanitarian Impact</h3>
-                <p className="text-slate-300 leading-relaxed mb-4">
+                <h3 className="text-white dark:text-white light:text-slate-900 font-semibold mb-4 text-xl">Humanitarian Impact</h3>
+                <p className="text-slate-300 dark:text-slate-300 light:text-slate-700 leading-relaxed mb-4">
                   In emergency situations, every minute counts. When vaccines are delayed or medical 
                   supplies are stuck in transit, lives are at stake. Chain AI's 80% reduction in 
                   analysis time means faster decisions, faster deliveries, and lives saved.
                 </p>
-                <p className="text-slate-300 leading-relaxed">
+                <p className="text-slate-300 dark:text-slate-300 light:text-slate-700 leading-relaxed">
                   Built for NGOs and humanitarian organizations responding to crises worldwide, 
                   Chain AI turns complex supply chain data into actionable insights in minutes, 
                   not hours.
@@ -432,6 +435,10 @@ export default function App() {
         {/* Chat Widget Section */}
         <section id="try-now" className="py-24 px-6 relative">
           <div className="max-w-7xl mx-auto">
+            {/* Live Crisis Feed */}
+            <div className="mb-16">
+              <LiveCrisisFeed />
+            </div>
             <div className="max-w-3xl mx-auto text-center mb-12">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -441,29 +448,29 @@ export default function App() {
                 <span className="inline-block px-4 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-sm font-medium mb-4">
                   Try It Now
                 </span>
-                <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                <h2 className="text-4xl md:text-5xl font-bold text-white dark:text-white light:text-slate-900 mb-6">
                   Experience Chain AI
                 </h2>
-                <p className="text-xl text-slate-400 leading-relaxed">
+                <p className="text-xl text-slate-400 dark:text-slate-400 light:text-slate-600 leading-relaxed">
                   Report a supply chain disruption and see how our multi-agent system analyzes and provides solutions
                 </p>
               </motion.div>
             </div>
 
-            <ChatWidget />
+            <IBMChatWidget />
           </div>
         </section>
 
         {/* Technology Section */}
         <section className="py-24 px-6 relative">
           <div className="max-w-7xl mx-auto">
-            <div className="backdrop-blur-xl bg-slate-800/30 border border-slate-700/50 rounded-3xl p-12 shadow-2xl">
+            <div className="backdrop-blur-xl bg-slate-800/30 dark:bg-slate-800/30 light:bg-white/70 border border-slate-700/50 dark:border-slate-700/50 light:border-slate-200 rounded-3xl p-12 shadow-2xl">
               <div className="max-w-3xl mx-auto text-center mb-12">
-                <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                <h2 className="text-4xl md:text-5xl font-bold text-white dark:text-white light:text-slate-900 mb-6">
                   Powered by{' '}
                   <span className="gradient-text">IBM watsonx Orchestrate</span>
                 </h2>
-                <p className="text-xl text-slate-400 leading-relaxed">
+                <p className="text-xl text-slate-400 dark:text-slate-400 light:text-slate-600 leading-relaxed">
                   Enterprise-grade AI orchestration for mission-critical humanitarian operations
                 </p>
               </div>
@@ -473,11 +480,11 @@ export default function App() {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  className="backdrop-blur-xl bg-slate-800/50 border border-slate-700/50 rounded-xl p-6 text-center hover:border-indigo-500/30 transition-all duration-300"
+                  className="backdrop-blur-xl bg-slate-800/50 dark:bg-slate-800/50 light:bg-white border border-slate-700/50 dark:border-slate-700/50 light:border-slate-200 rounded-xl p-6 text-center hover:border-indigo-500/30 transition-all duration-300"
                 >
                   <Network className="w-12 h-12 text-indigo-400 mx-auto mb-4" />
-                  <h3 className="text-white font-semibold mb-2">Multi-Agent System</h3>
-                  <p className="text-slate-400">
+                  <h3 className="text-white dark:text-white light:text-slate-900 font-semibold mb-2">Multi-Agent System</h3>
+                  <p className="text-slate-400 dark:text-slate-400 light:text-slate-600">
                     5 specialized agents coordinated by supervisor using ReAct reasoning framework
                   </p>
                 </motion.div>
@@ -487,11 +494,11 @@ export default function App() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.1 }}
-                  className="backdrop-blur-xl bg-slate-800/50 border border-slate-700/50 rounded-xl p-6 text-center hover:border-purple-500/30 transition-all duration-300"
+                  className="backdrop-blur-xl bg-slate-800/50 dark:bg-slate-800/50 light:bg-white border border-slate-700/50 dark:border-slate-700/50 light:border-slate-200 rounded-xl p-6 text-center hover:border-purple-500/30 transition-all duration-300"
                 >
                   <Search className="w-12 h-12 text-purple-400 mx-auto mb-4" />
-                  <h3 className="text-white font-semibold mb-2">Real-Time Analysis</h3>
-                  <p className="text-slate-400">
+                  <h3 className="text-white dark:text-white light:text-slate-900 font-semibold mb-2">Real-Time Analysis</h3>
+                  <p className="text-slate-400 dark:text-slate-400 light:text-slate-600">
                     Integrates live data from transportation, weather, inventory, and news sources
                   </p>
                 </motion.div>
@@ -501,11 +508,11 @@ export default function App() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.2 }}
-                  className="backdrop-blur-xl bg-slate-800/50 border border-slate-700/50 rounded-xl p-6 text-center hover:border-teal-500/30 transition-all duration-300"
+                  className="backdrop-blur-xl bg-slate-800/50 dark:bg-slate-800/50 light:bg-white border border-slate-700/50 dark:border-slate-700/50 light:border-slate-200 rounded-xl p-6 text-center hover:border-teal-500/30 transition-all duration-300"
                 >
                   <Lightbulb className="w-12 h-12 text-teal-400 mx-auto mb-4" />
-                  <h3 className="text-white font-semibold mb-2">Intelligent Insights</h3>
-                  <p className="text-slate-400">
+                  <h3 className="text-white dark:text-white light:text-slate-900 font-semibold mb-2">Intelligent Insights</h3>
+                  <p className="text-slate-400 dark:text-slate-400 light:text-slate-600">
                     Actionable recommendations with cost estimates, timelines, and risk assessments
                   </p>
                 </motion.div>
@@ -513,35 +520,36 @@ export default function App() {
             </div>
           </div>
         </section>
+        </div>
 
         {/* Footer */}
-        <footer className="py-12 px-6 border-t border-slate-800/50 relative">
+        <footer className="py-12 px-6 border-t border-slate-800/50 dark:border-slate-800/50 light:border-slate-200 relative">
           <div className="max-w-7xl mx-auto">
-            <div className="backdrop-blur-xl bg-slate-800/20 rounded-2xl p-8">
+            <div className="backdrop-blur-xl bg-slate-800/20 dark:bg-slate-800/20 light:bg-white/60 rounded-2xl p-8">
               {/* Logo and tagline */}
               <div className="text-center mb-8">
                 <div className="flex justify-center mb-4">
                   <ChainAILogo size="md" animated={false} />
                 </div>
-                <p className="text-slate-400 mb-2">Emergency Supply Chain Response</p>
-                <p className="text-slate-500">Powered by IBM watsonx Orchestrate</p>
+                <p className="text-slate-400 dark:text-slate-400 light:text-slate-600 mb-2">Emergency Supply Chain Response</p>
+                <p className="text-slate-500 dark:text-slate-500 light:text-slate-500">Powered by IBM watsonx Orchestrate + ReliefWeb</p>
               </div>
 
               {/* Links */}
               <div className="flex flex-wrap justify-center gap-6 mb-8">
-                <a href="#" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors duration-300">
+                <a href="#" className="flex items-center gap-2 text-slate-400 dark:text-slate-400 light:text-slate-600 hover:text-white dark:hover:text-white light:hover:text-slate-900 transition-colors duration-300">
                   <FileText className="w-4 h-4" />
                   Documentation
                 </a>
-                <a href="#" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors duration-300">
+                <a href="#" className="flex items-center gap-2 text-slate-400 dark:text-slate-400 light:text-slate-600 hover:text-white dark:hover:text-white light:hover:text-slate-900 transition-colors duration-300">
                   <Github className="w-4 h-4" />
                   GitHub
                 </a>
-                <a href="#" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors duration-300">
+                <a href="#" className="flex items-center gap-2 text-slate-400 dark:text-slate-400 light:text-slate-600 hover:text-white dark:hover:text-white light:hover:text-slate-900 transition-colors duration-300">
                   <Mail className="w-4 h-4" />
                   Contact
                 </a>
-                <a href="#" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors duration-300">
+                <a href="#" className="flex items-center gap-2 text-slate-400 dark:text-slate-400 light:text-slate-600 hover:text-white dark:hover:text-white light:hover:text-slate-900 transition-colors duration-300">
                   <Lock className="w-4 h-4" />
                   Privacy
                 </a>
@@ -549,10 +557,10 @@ export default function App() {
 
               {/* Bottom text */}
               <div className="text-center space-y-2">
-                <p className="text-slate-500 text-sm">
+                <p className="text-slate-500 dark:text-slate-500 light:text-slate-400 text-sm">
                   Built for Call for Code Global Challenge 2025
                 </p>
-                <p className="text-slate-600 text-sm">
+                <p className="text-slate-600 dark:text-slate-600 light:text-slate-500 text-sm">
                   © 2025 Chain AI. All rights reserved.
                 </p>
               </div>
@@ -560,6 +568,6 @@ export default function App() {
           </div>
         </footer>
       </div>
-    </div>
+    </ThemeProvider>
   );
 }

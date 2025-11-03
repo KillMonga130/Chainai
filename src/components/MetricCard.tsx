@@ -17,7 +17,7 @@ export function MetricCard({ value, label, subtitle, index = 0 }: MetricCardProp
       whileHover={{ scale: 1.05, y: -4 }}
       className="group relative"
     >
-      <div className="backdrop-blur-xl bg-slate-800/30 border border-slate-700/50 rounded-2xl p-8 text-center hover:bg-slate-800/50 hover:border-indigo-500/30 transition-all duration-500 relative overflow-hidden">
+      <div className="backdrop-blur-xl bg-slate-800/30 dark:bg-slate-800/30 light:bg-white/60 border border-slate-700/50 dark:border-slate-700/50 light:border-slate-200 rounded-2xl p-8 text-center hover:bg-slate-800/50 dark:hover:bg-slate-800/50 light:hover:bg-white/80 hover:border-indigo-500/30 transition-all duration-500 relative overflow-hidden">
         {/* Value */}
         <motion.div
           className="mb-2 text-4xl md:text-5xl font-bold bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent"
@@ -28,13 +28,13 @@ export function MetricCard({ value, label, subtitle, index = 0 }: MetricCardProp
         </motion.div>
         
         {/* Label */}
-        <div className="text-white/90 font-medium mb-1">
+        <div className="text-white/90 dark:text-white/90 light:text-slate-900 font-medium mb-1">
           {label}
         </div>
         
         {/* Subtitle */}
         {subtitle && (
-          <div className="text-slate-400 text-sm">
+          <div className="text-slate-400 dark:text-slate-400 light:text-slate-600 text-sm">
             {subtitle}
           </div>
         )}

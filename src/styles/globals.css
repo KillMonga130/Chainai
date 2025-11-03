@@ -5,7 +5,7 @@
 :root {
   --font-size: 16px;
   
-  /* Premium Dark-First Color System */
+  /* Premium Color System */
   --primary: 263 70% 50%;           /* #4F46E5 Indigo */
   --primary-rgb: 79, 70, 229;
   --primary-hover: 263 70% 45%;
@@ -15,24 +15,6 @@
   
   --accent: 173 58% 39%;            /* #14B8A6 Teal */
   --accent-rgb: 20, 184, 166;
-  
-  /* Dark Mode (Default) */
-  --background: 222 47% 11%;        /* #0F172A Dark Slate */
-  --foreground: 210 40% 98%;        /* #F8FAFC Light Text */
-  --card: 217 33% 17%;              /* #1E293B Elevated */
-  --card-foreground: 210 40% 98%;
-  --popover: 222 47% 11%;
-  --popover-foreground: 210 40% 98%;
-  --primary-foreground: 210 40% 98%;
-  --secondary-foreground: 210 40% 98%;
-  --muted: 217 33% 17%;
-  --muted-foreground: 215 16% 47%; /* #64748B */
-  --accent-foreground: 210 40% 98%;
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 217 33% 17%;
-  --input: 217 33% 17%;
-  --ring: 263 70% 50%;
   
   /* Spacing Scale (8px base) */
   --space-0: 0px;
@@ -82,20 +64,44 @@
   --chart-5: oklch(0.769 0.188 70.08);
 }
 
+/* Dark Theme (Default) */
+.dark {
+  --background: 222 47% 11%;        /* #0F172A Dark Slate */
+  --foreground: 210 40% 98%;        /* #F8FAFC Light Text */
+  --card: 217 33% 17%;              /* #1E293B Elevated */
+  --card-foreground: 210 40% 98%;
+  --popover: 222 47% 11%;
+  --popover-foreground: 210 40% 98%;
+  --primary-foreground: 210 40% 98%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217 33% 17%;
+  --muted-foreground: 215 16% 47%; /* #64748B */
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217 33% 17%;
+  --input: 217 33% 17%;
+  --ring: 263 70% 50%;
+}
+
+/* Light Theme */
 .light {
-  --background: 0 0% 100%;
-  --foreground: 222 47% 11%;
-  --card: 210 40% 98%;
+  --background: 0 0% 100%;          /* #FFFFFF Pure White */
+  --foreground: 222 47% 11%;        /* #0F172A Dark Text */
+  --card: 210 40% 98%;              /* #F8FAFC Light Gray */
   --card-foreground: 222 47% 11%;
   --popover: 0 0% 100%;
   --popover-foreground: 222 47% 11%;
   --primary-foreground: 210 40% 98%;
-  --secondary-foreground: 222 47% 11%;
-  --muted: 210 40% 96%;
-  --muted-foreground: 215 16% 47%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 210 40% 96%;             /* #F1F5F9 */
+  --muted-foreground: 215 16% 47%;  /* #64748B */
   --accent-foreground: 222 47% 11%;
-  --border: 214 32% 91%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 214 32% 91%;            /* #E2E8F0 */
   --input: 214 32% 91%;
+  --ring: 263 70% 50%;
 }
 
 @theme inline {
@@ -214,10 +220,18 @@
 
 /* Glass Morphism Utility */
 .glass {
-  background: rgba(30, 41, 59, 0.5);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+}
+
+.dark .glass {
+  background: rgba(30, 41, 59, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.light .glass {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 /* Glow Effects */

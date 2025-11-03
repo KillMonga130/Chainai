@@ -39,10 +39,9 @@ export default function App() {
   // Initialization
   useEffect(() => {
     // Authentication status console message
-    const ENV: any = (import.meta as any)?.env ?? {};
-    const isSecurityDisabled = `${ENV.VITE_WXO_SECURITY_DISABLED}` === 'true';
-    const hasJWT = !!ENV.VITE_WXO_JWT;
-    const useIAM = `${ENV.VITE_WXO_USE_IAM}` === 'true';
+    const isSecurityDisabled = import.meta.env.VITE_WXO_SECURITY_DISABLED === 'true';
+    const hasJWT = !!import.meta.env.VITE_WXO_JWT;
+    const useIAM = import.meta.env.VITE_WXO_USE_IAM === 'true';
 
     console.log(
       '%c🔐 Chain AI Security System',

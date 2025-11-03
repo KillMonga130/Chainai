@@ -90,13 +90,11 @@ export function WatsonXChat({ agent, onLoad, onChatReady, className = '' }: Wats
               
               // Subscribe to error events
               instance.on('error', (event: any) => {
-                // Suppress expected errors when security is disabled
-                const errorCode = event?.error?.code || event?.error?.status;
-                if (errorCode === 401 || event?.error?.message?.includes('authToken')) {
-                  console.log('[Chain AI] Auth error suppressed (security disabled)');
-                  return;
-                }
                 console.error('[Chain AI] Chat error event:', event);
+                // Don't suppress errors - we need to see what's blocking the connection
+                const errorMsg = event?.error?.message || event?.message || 'Unknown error';
+                setError(`Chat initialization failed: ${errorMsg}`);
+                setIsLoading(false);
               });
 
               // Subscribe to chat ready event
@@ -173,6 +171,15 @@ export function WatsonXChat({ agent, onLoad, onChatReady, className = '' }: Wats
           if (window.wxoLoader) {
             window.wxoLoader.init();
             scriptLoadedRef.current = true;
+            
+            // Set timeout to detect if chat never becomes ready
+            setTimeout(() => {
+              if (isLoading) {
+                console.error('[Chain AI] Chat failed to become ready within 30 seconds');
+                setError('Chat connection timeout. The agent may not be configured for anonymous access or the environment may not be published. Check browser console for details.');
+                setIsLoading(false);
+              }
+            }, 30000);
           } else {
             setError('Failed to initialize watsonx Orchestrate');
           }

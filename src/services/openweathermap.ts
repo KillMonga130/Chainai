@@ -1,7 +1,8 @@
 // OpenWeatherMap API Service
 // Provides real-time weather data for crisis locations to support supply chain logistics
 
-const OPENWEATHER_API_KEY = '8237bb91819a348b3a347b0fe635f881';
+// Load API key from environment variable
+const OPENWEATHER_API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY || '';
 const BASE_URL = 'https://api.openweathermap.org/data/2.5';
 
 export interface WeatherData {

@@ -17,8 +17,8 @@ export const WATSONX_CONFIG = {
   hostURL: "https://us-south.watson-orchestrate.cloud.ibm.com",
   deploymentPlatform: "ibmcloud" as const,
   crn: "crn:v1:bluemix:public:watsonx-orchestrate:us-south:a/c139b03f7afb4bc7b617216e3046ac5b:6e4a398d-0f34-42ad-9706-1f16af156856::",
-  // Prefer env var when available; hardcoded value is for local dev only
-  apiKey: (import.meta as any)?.env?.VITE_WATSONX_API_KEY ?? "8JF8iB1bBVvzRtTvU1D8W7oeH8z0JqSMC9tF4KC4Ya6c",
+  // Load API key from environment variable only
+  apiKey: (import.meta as any)?.env?.VITE_WATSONX_API_KEY ?? "",
   apiUrl: "https://api.us-south.watson-orchestrate.cloud.ibm.com/instances/6e4a398d-0f34-42ad-9706-1f16af156856"
 };
 

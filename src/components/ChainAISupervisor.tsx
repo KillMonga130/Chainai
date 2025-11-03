@@ -15,11 +15,13 @@ import {
   Play,
   Pause,
   ExternalLink,
-  Sparkles
+  Sparkles,
+  CheckCircle2,
+  XCircle
 } from 'lucide-react';
 import { LogoIcon } from './Logo';
 import { fetchSupplyChainReports } from '../services/reliefweb';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { AGENTS, WatsonXAgent } from '../services/watsonx-config';
 import { WatsonXChat } from './WatsonXChat';
 
@@ -59,6 +61,8 @@ export function ChainAISupervisor() {
   const [input, setInput] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [showAgentPanel, setShowAgentPanel] = useState(true);
+  const [awaitingApproval, setAwaitingApproval] = useState(false);
+  const [approvalData, setApprovalData] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   const generateMessageId = () => {
@@ -121,6 +125,76 @@ export function ChainAISupervisor() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  const handleApprove = async (selectedStrategies: number[]) => {
+    setAwaitingApproval(false);
+    setIsProcessing(true);
+
+    const approvalMsg: Message = {
+      id: generateMessageId(),
+      role: 'user',
+      content: `✅ Approved ${selectedStrategies.length} mitigation strateg${selectedStrategies.length === 1 ? 'y' : 'ies'} for implementation`,
+      timestamp: new Date()
+    };
+    setMessages(prev => [...prev, approvalMsg]);
+
+    // Simulate implementation process
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    const implementationMsg: Message = {
+      id: generateMessageId(),
+      role: 'supervisor',
+      content: `🚀 Implementation In Progress\n\nApproved strategies are being executed:\n${approvalData.mitigationStrategies
+        .filter((s: any) => selectedStrategies.includes(s.id))
+        .map((s: any) => `\n• ${s.title}\n  Status: Initiating...\n  Timeline: ${s.timeline}\n  Actions: ${s.actions.join(', ')}`)
+        .join('\n')}\n\n📧 Stakeholder notifications sent to logistics teams, NGO leadership, and clinic directors.\n\n📊 Implementation tracking activated. You can monitor progress in the Operations Dashboard.`,
+      timestamp: new Date()
+    };
+    setMessages(prev => [...prev, implementationMsg]);
+
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    const completionMsg: Message = {
+      id: generateMessageId(),
+      role: 'supervisor',
+      content: `✅ Implementation Initiated Successfully\n\nAll approved actions are now in motion:\n• Emergency response teams deployed\n• Stakeholders notified and coordinating\n• Real-time tracking enabled\n• Audit trail logged for accountability\n\nEstimated time to full implementation: 24-72 hours\nNext checkpoint: 6 hours for status update`,
+      timestamp: new Date()
+    };
+    setMessages(prev => [...prev, completionMsg]);
+
+    setIsProcessing(false);
+    toast.success('Strategies Approved & Implemented', {
+      description: `${selectedStrategies.length} mitigation strateg${selectedStrategies.length === 1 ? 'y' : 'ies'} now in progress`
+    });
+  };
+
+  const handleReject = async (reason: string) => {
+    setAwaitingApproval(false);
+    setIsProcessing(true);
+
+    const rejectionMsg: Message = {
+      id: generateMessageId(),
+      role: 'user',
+      content: `❌ Recommendations Rejected\n\nReason: ${reason}`,
+      timestamp: new Date()
+    };
+    setMessages(prev => [...prev, rejectionMsg]);
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    const responseMsg: Message = {
+      id: generateMessageId(),
+      role: 'supervisor',
+      content: `📝 Feedback Received\n\nI understand the current recommendations don't meet requirements. I can:\n\n1. Re-analyze with different parameters\n2. Explore alternative mitigation approaches\n3. Provide more detailed cost-benefit analysis\n4. Consult additional data sources\n\nWhat would you like me to focus on for the revised analysis?`,
+      timestamp: new Date()
+    };
+    setMessages(prev => [...prev, responseMsg]);
+
+    setIsProcessing(false);
+    toast.info('Recommendations Rejected', {
+      description: 'Ready for revised analysis with your feedback'
+    });
+  };
 
   const updateAgentStatus = (agentId: string, status: Agent['status'], progress: number, message: string) => {
     setAgents(prev => prev.map(agent => 
@@ -234,6 +308,54 @@ export function ChainAISupervisor() {
     await new Promise(resolve => setTimeout(resolve, 800));
     updateAgentStatus('supervisor', 'complete', 100, 'Workflow complete - Analysis ready for review');
     
+    const recommendations = {
+      impact: {
+        priority: 'HIGH',
+        affectedRoutes: ['North-South Corridor', 'East Supply Line'],
+        estimatedDelay: '72-96 hours',
+        criticalSupplies: ['Medical supplies', 'Food aid', 'Water purification']
+      },
+      rootCauses: [
+        { cause: 'Transportation delays', severity: 'High', confidence: 0.92 },
+        { cause: 'Weather impacts (flooding)', severity: 'Medium', confidence: 0.85 },
+        { cause: 'Inventory gaps at regional hubs', severity: 'High', confidence: 0.88 }
+      ],
+      mitigationStrategies: [
+        {
+          id: 1,
+          title: 'Emergency Air Transport',
+          cost: '$45,000',
+          timeline: '24-48 hours',
+          risk: 'Low',
+          impact: 'Immediate relief for critical supplies',
+          actions: ['Charter cargo aircraft', 'Coordinate airfield access', 'Deploy ground teams for distribution']
+        },
+        {
+          id: 2,
+          title: 'Alternative Route Activation',
+          cost: '$15,000',
+          timeline: '48-72 hours',
+          risk: 'Medium',
+          impact: 'Sustainable secondary supply line',
+          actions: ['Survey western route', 'Negotiate border crossing', 'Establish relay stations']
+        },
+        {
+          id: 3,
+          title: 'Local Procurement + Redistribution',
+          cost: '$28,000',
+          timeline: '36-60 hours',
+          risk: 'Medium-High',
+          impact: 'Reduces dependency on external supply',
+          actions: ['Source local suppliers', 'Quality verification', 'Redistribute from surplus hubs']
+        }
+      ],
+      stakeholderCommunications: {
+        logistics: 'Detailed route analysis and vehicle deployment schedule',
+        leadership: 'Budget approval request for emergency measures',
+        clinics: 'Supply status updates and expected delivery timelines'
+      }
+    };
+
     const finalMsg: Message = {
       id: generateMessageId(),
       role: 'supervisor',
@@ -242,9 +364,11 @@ export function ChainAISupervisor() {
     };
     setMessages(prev => [...prev, finalMsg]);
 
+    setApprovalData(recommendations);
+    setAwaitingApproval(true);
     setIsProcessing(false);
-    toast.success('Analysis Complete', {
-      description: 'Multi-agent workflow finished in 20 minutes'
+    toast.info('Awaiting Human Approval', {
+      description: 'Review the recommended mitigation strategies'
     });
   };
 
@@ -555,6 +679,87 @@ export function ChainAISupervisor() {
                 </motion.div>
                 ))}
                 <div ref={messagesEndRef} />
+              </div>
+            )}
+
+            {/* Approval Interface */}
+            {awaitingApproval && approvalData && chatMode === 'demo' && (
+              <div className="p-6 dark:bg-slate-900/50 light:bg-slate-50 border-t dark:border-slate-700/50 light:border-slate-200">
+                <div className="mb-4">
+                  <h3 className="text-lg font-semibold dark:text-white light:text-slate-900 mb-2">Review Mitigation Strategies</h3>
+                  <p className="text-sm dark:text-slate-400 light:text-slate-600">Select strategies to approve for implementation</p>
+                </div>
+
+                <div className="space-y-3 mb-6">
+                  {approvalData.mitigationStrategies.map((strategy: any) => (
+                    <div key={strategy.id} className="dark:bg-slate-800/50 light:bg-white border dark:border-slate-700 light:border-slate-300 rounded-lg p-4">
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex-1">
+                          <h4 className="font-medium dark:text-white light:text-slate-900">{strategy.title}</h4>
+                          <p className="text-sm dark:text-slate-400 light:text-slate-600 mt-1">{strategy.impact}</p>
+                        </div>
+                        <input
+                          type="checkbox"
+                          id={`strategy-${strategy.id}`}
+                          defaultChecked={strategy.id === 1}
+                          className="mt-1 w-4 h-4 accent-indigo-600"
+                          aria-label={`Select ${strategy.title}`}
+                        />
+                      </div>
+                      <div className="grid grid-cols-3 gap-4 mt-3 text-sm">
+                        <div>
+                          <span className="dark:text-slate-500 light:text-slate-400">Cost:</span>
+                          <span className="ml-2 dark:text-white light:text-slate-900">{strategy.cost}</span>
+                        </div>
+                        <div>
+                          <span className="dark:text-slate-500 light:text-slate-400">Timeline:</span>
+                          <span className="ml-2 dark:text-white light:text-slate-900">{strategy.timeline}</span>
+                        </div>
+                        <div>
+                          <span className="dark:text-slate-500 light:text-slate-400">Risk:</span>
+                          <span className={`ml-2 ${strategy.risk === 'Low' ? 'text-green-400' : strategy.risk === 'Medium' ? 'text-yellow-400' : 'text-orange-400'}`}>{strategy.risk}</span>
+                        </div>
+                      </div>
+                      <div className="mt-3 text-xs dark:text-slate-400 light:text-slate-600">
+                        <strong>Actions:</strong> {strategy.actions.join(' • ')}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => {
+                      const selected = approvalData.mitigationStrategies
+                        .filter((_: any, idx: number) => {
+                          const checkbox = document.getElementById(`strategy-${idx + 1}`) as HTMLInputElement;
+                          return checkbox?.checked;
+                        })
+                        .map((s: any) => s.id);
+                      if (selected.length > 0) {
+                        handleApprove(selected);
+                      } else {
+                        toast.error('Please select at least one strategy');
+                      }
+                    }}
+                    className="flex-1 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:shadow-lg hover:shadow-green-500/25 transition-all duration-300 flex items-center justify-center gap-2"
+                  >
+                    <CheckCircle2 className="w-5 h-5" />
+                    <span>Approve & Implement</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      const reason = prompt('Please provide a reason for rejection:');
+                      if (reason) {
+                        handleReject(reason);
+                      }
+                    }}
+                    className="flex-1 px-6 py-3 dark:bg-slate-700/50 light:bg-slate-200 dark:text-white light:text-slate-900 rounded-xl hover:bg-red-500/20 hover:text-red-400 dark:hover:text-red-400 light:hover:text-red-600 transition-all duration-300 flex items-center justify-center gap-2"
+                  >
+                    <XCircle className="w-5 h-5" />
+                    <span>Reject & Revise</span>
+                  </button>
+                </div>
               </div>
             )}
 

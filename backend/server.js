@@ -115,13 +115,5 @@ app.listen(PORT, () => {
   console.log(`  - GET /createJWT?user_id=<id>  - Generate JWT token`);
   console.log(`  - GET /health                  - Health check`);
   console.log(`  - GET /publicKey               - Get public key`);
-  console.log(`\n⚠️  IMPORTANT SETUP STEPS:`);
-  console.log(`\n1. Copy the public key above`);
-  console.log(`2. Log into watsonx Orchestrate: https://us-south.watson-orchestrate.cloud.ibm.com`);
-  console.log(`3. Go to: Settings → Security → Embedded Chat → Public Key`);
-  console.log(`4. Paste the public key and save`);
-  console.log(`5. Update your .env.local:`);
-  console.log(`   - Remove: VITE_WXO_SECURITY_DISABLED=true`);
-  console.log(`   - Add: VITE_WXO_USE_JWT_SERVER=true`);
-  console.log(`6. Restart your React dev server\n`);
+  
 });

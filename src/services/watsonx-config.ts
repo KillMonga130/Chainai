@@ -12,13 +12,17 @@ export interface WatsonXAgent {
   color: string;
 }
 
+// Debug: Log all environment variables to see what Vite is loading
+console.log('[Chain AI Config] All Vite env vars:', (import.meta as any)?.env);
+console.log('[Chain AI Config] VITE_WATSONX_API_KEY:', (import.meta as any)?.env?.VITE_WATSONX_API_KEY);
+
 export const WATSONX_CONFIG = {
   orchestrationID: "c139b03f7afb4bc7b617216e3046ac5b_6e4a398d-0f34-42ad-9706-1f16af156856",
   hostURL: "https://us-south.watson-orchestrate.cloud.ibm.com",
   deploymentPlatform: "ibmcloud" as const,
   crn: "crn:v1:bluemix:public:watsonx-orchestrate:us-south:a/c139b03f7afb4bc7b617216e3046ac5b:6e4a398d-0f34-42ad-9706-1f16af156856::",
-  // Load API key from environment variable only
-  apiKey: (import.meta as any)?.env?.VITE_WATSONX_API_KEY ?? "",
+  // Load API key from environment variable with fallback
+  apiKey: (import.meta as any)?.env?.VITE_WATSONX_API_KEY || "RsqNRdz-VvzT5MrxLBo_UUwkPLMZtNaDg2EgdVecMUzE",
   apiUrl: "https://api.us-south.watson-orchestrate.cloud.ibm.com/instances/6e4a398d-0f34-42ad-9706-1f16af156856"
 };
 

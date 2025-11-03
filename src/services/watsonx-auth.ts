@@ -39,6 +39,16 @@ let tokenExpiration: number = 0;
 async function getIAMToken(): Promise<string> {
   try {
     console.log('[Chain AI Auth] Attempting to get IAM token...');
+    
+    // Verify API key is loaded
+    if (!WATSONX_CONFIG.apiKey || WATSONX_CONFIG.apiKey.trim() === '') {
+      console.error('[Chain AI Auth] API key is missing or empty!');
+      console.error('[Chain AI Auth] VITE_WATSONX_API_KEY environment variable not found');
+      throw new Error('API key is required for IAM authentication. Please set VITE_WATSONX_API_KEY in .env.local');
+    }
+    
+    console.log(`[Chain AI Auth] API key loaded (length: ${WATSONX_CONFIG.apiKey.length} chars)`);
+    
     // Use Vite dev proxy in development to avoid CORS; real IAM endpoint in production
     const iamBase = (typeof import.meta !== 'undefined' && (import.meta as any).env?.DEV)
       ? '/_iam'
@@ -55,6 +65,8 @@ async function getIAMToken(): Promise<string> {
         apikey: WATSONX_CONFIG.apiKey,
       }),
     });
+    
+    console.log(`[Chain AI Auth] IAM request sent to: ${iamBase}/identity/token`);
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -107,13 +119,7 @@ export async function generateAuthToken(): Promise<string> {
       return ENV_JWT;
     }
 
-    // 2) If security is explicitly disabled, return empty string (no token needed)
-    if (ENV_SECURITY_DISABLED) {
-      console.warn('[Chain AI Auth] Security disabled by env flag. No token required.');
-      return '';
-    }
-
-    // 3) Optionally allow IAM token usage if explicitly enabled
+    // 2) Optionally allow IAM token usage if explicitly enabled (preferred over security-disabled fallback)
     if (ENV_USE_IAM) {
       try {
         const iamToken = await getIAMToken();
@@ -127,6 +133,12 @@ export async function generateAuthToken(): Promise<string> {
         }
         throw iamError;
       }
+    }
+
+    // 3) If security is explicitly disabled, return empty string (no token needed)
+    if (ENV_SECURITY_DISABLED) {
+      console.warn('[Chain AI Auth] Security disabled by env flag. No token required.');
+      return '';
     }
 
     // 4) Otherwise, we cannot provide a valid token under secure instance

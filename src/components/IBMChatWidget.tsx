@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { Sparkles, RefreshCw, Copy, Check } from 'lucide-react';
 import { LogoIcon } from './Logo';
-import { fetchSupplyChainReports } from '../services/reliefweb';
+import { fetchSupplyChainReports, formatReport } from '../services/reliefweb';
 import { toast } from 'sonner@2.0.3';
 
 declare global {
@@ -10,6 +10,7 @@ declare global {
     wxOConfiguration?: {
       orchestrationID: string;
       hostURL: string;
+      rootElementID: string;
       deploymentPlatform: string;
       crn: string;
       chatOptions: {
@@ -24,6 +25,7 @@ declare global {
 }
 
 export function IBMChatWidget() {
+  const chatContainerRef = useRef<HTMLDivElement>(null);
   const [quickPrompts, setQuickPrompts] = useState<string[]>([
     "Analyze recent humanitarian supply chain disruptions",
     "Check current logistics challenges in crisis zones",
@@ -90,7 +92,7 @@ export function IBMChatWidget() {
         .then(() => {
           setCopiedIndex(index);
           toast.success('Prompt copied!', {
-            description: 'Click the chat button (bottom right) to paste and start analysis'
+            description: 'Paste it into the chat below to start analysis'
           });
           
           setTimeout(() => {
@@ -103,7 +105,7 @@ export function IBMChatWidget() {
           if (success) {
             setCopiedIndex(index);
             toast.success('Prompt copied!', {
-              description: 'Click the chat button (bottom right) to paste and start analysis'
+              description: 'Paste it into the chat below to start analysis'
             });
             
             setTimeout(() => {
@@ -121,7 +123,7 @@ export function IBMChatWidget() {
       if (success) {
         setCopiedIndex(index);
         toast.success('Prompt copied!', {
-          description: 'Click the chat button (bottom right) to paste and start analysis'
+          description: 'Paste it into the chat below to start analysis'
         });
         
         setTimeout(() => {
@@ -163,10 +165,10 @@ export function IBMChatWidget() {
     };
 
     // Configure IBM watsonx Orchestrate
-    // WITHOUT rootElementID to enable the floating chat button
     window.wxOConfiguration = {
       orchestrationID: "c139b03f7afb4bc7b617216e3046ac5b_6e4a398d-0f34-42ad-9706-1f16af156856",
       hostURL: "https://us-south.watson-orchestrate.cloud.ibm.com",
+      rootElementID: "ibm-chat-root",
       deploymentPlatform: "ibmcloud",
       crn: "crn:v1:bluemix:public:watsonx-orchestrate:us-south:a/c139b03f7afb4bc7b617216e3046ac5b:6e4a398d-0f34-42ad-9706-1f16af156856::",
       chatOptions: {
@@ -178,16 +180,10 @@ export function IBMChatWidget() {
     // Load the IBM watsonx Orchestrate script
     const script = document.createElement('script');
     script.src = `${window.wxOConfiguration.hostURL}/wxochat/wxoLoader.js?embed=true`;
-    script.async = true;
     script.addEventListener('load', () => {
-      console.log('IBM watsonx Orchestrate script loaded');
       if (window.wxoLoader) {
         window.wxoLoader.init();
-        console.log('IBM watsonx Orchestrate initialized - floating button should appear at bottom right');
       }
-    });
-    script.addEventListener('error', (error) => {
-      console.error('Failed to load IBM watsonx Orchestrate script:', error);
     });
     document.head.appendChild(script);
 
@@ -231,7 +227,7 @@ export function IBMChatWidget() {
           <div className="flex items-center justify-between mb-3">
             <div>
               <p className="text-slate-400 dark:text-slate-400 light:text-slate-600 text-sm font-medium">Real-time crisis data from ReliefWeb</p>
-              <p className="text-slate-500 dark:text-slate-500 light:text-slate-500 text-xs mt-0.5">Click to copy, then use the chat button at bottom right →</p>
+              <p className="text-slate-500 dark:text-slate-500 light:text-slate-500 text-xs mt-0.5">Click any prompt to copy and paste into chat below</p>
             </div>
             <button
               onClick={loadRealCrisisData}
@@ -263,16 +259,12 @@ export function IBMChatWidget() {
           </div>
         </div>
 
-        {/* Info Section */}
-        <div className="p-6 dark:bg-slate-900/50 light:bg-slate-50 border-t dark:border-slate-700/50 light:border-slate-200 text-center">
-          <div className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full dark:bg-indigo-500/10 light:bg-indigo-100 border dark:border-indigo-500/20 light:border-indigo-300 mb-3">
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-            <span className="text-sm dark:text-indigo-300 light:text-indigo-700">IBM watsonx Orchestrate Active</span>
-          </div>
-          <p className="text-slate-400 dark:text-slate-400 light:text-slate-600 text-sm max-w-2xl mx-auto">
-            Look for the <strong>floating chat button at the bottom right</strong> of your screen. Click it to open the IBM watsonx AI assistant and paste your copied crisis analysis prompts.
-          </p>
-        </div>
+        {/* IBM watsonx Orchestrate Chat Embed */}
+        <div 
+          id="ibm-chat-root" 
+          ref={chatContainerRef}
+          className="min-h-[500px] dark:bg-slate-900/50 light:bg-slate-50"
+        />
       </div>
 
       {/* Info note */}

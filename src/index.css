@@ -101,7 +101,6 @@
     --color-slate-950: oklch(.129 .042 264.695);
     --color-white: #fff;
     --spacing: .25rem;
-    --container-2xl: 42rem;
     --container-3xl: 48rem;
     --container-4xl: 56rem;
     --container-7xl: 80rem;
@@ -777,6 +776,10 @@
     height: 1px;
   }
 
+  .min-h-\[500px\] {
+    min-height: 500px;
+  }
+
   .min-h-screen {
     min-height: 100vh;
   }
@@ -851,10 +854,6 @@
 
   .w-full {
     width: 100%;
-  }
-
-  .max-w-2xl {
-    max-width: var(--container-2xl);
   }
 
   .max-w-3xl {
@@ -1200,10 +1199,6 @@
 
   .bg-destructive {
     background-color: var(--destructive);
-  }
-
-  .bg-green-400 {
-    background-color: var(--color-green-400);
   }
 
   .bg-green-500\/10 {
@@ -2272,16 +2267,6 @@
     }
   }
 
-  .dark\:border-indigo-500\/20:is(.dark *) {
-    border-color: color-mix(in srgb, oklch(.585 .233 277.117) 20%, transparent);
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .dark\:border-indigo-500\/20:is(.dark *) {
-      border-color: color-mix(in oklab, var(--color-indigo-500) 20%, transparent);
-    }
-  }
-
   .dark\:border-slate-600\/50:is(.dark *) {
     border-color: color-mix(in srgb, oklch(.446 .043 257.281) 50%, transparent);
   }
@@ -2333,16 +2318,6 @@
   @supports (color: color-mix(in lab, red, red)) {
     .dark\:bg-destructive\/60:is(.dark *) {
       background-color: color-mix(in oklab, var(--destructive) 60%, transparent);
-    }
-  }
-
-  .dark\:bg-indigo-500\/10:is(.dark *) {
-    background-color: color-mix(in srgb, oklch(.585 .233 277.117) 10%, transparent);
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .dark\:bg-indigo-500\/10:is(.dark *) {
-      background-color: color-mix(in oklab, var(--color-indigo-500) 10%, transparent);
     }
   }
 
@@ -2474,10 +2449,6 @@
     .dark\:to-purple-900\/30:is(.dark *) {
       --tw-gradient-to: color-mix(in oklab, var(--color-purple-900) 30%, transparent);
     }
-  }
-
-  .dark\:text-indigo-300:is(.dark *) {
-    color: var(--color-indigo-300);
   }
 
   .dark\:text-indigo-400:is(.dark *) {
